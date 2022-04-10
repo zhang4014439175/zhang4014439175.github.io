@@ -78,4 +78,117 @@ Hugo使用了多种开源项目，包括:
 https://github.com/yuin/goldmark https://github.com/alecthomas/chroma https://github.com/muesli/smartcrop https://github.com/spf13/cobra https://github.com/spf13/viper Hugo是博客、企业网站、创意作品集、在线杂志、单页应用程序甚至是数千页的网站的理想选择。
 Hugo适合那些想要手工编写自己的网站代码，而不用担心设置复杂的运行时、依赖关系和数据库的人。
 使用Hugo建立的网站非常快速、安全，可以部署在任何地方，包括AWS、GitHub Pages、Heroku、Netlify和任何其他托管提供商。
-更多信息请访问GitHub.</content></entry></search>
+更多信息请访问GitHub.</content></entry><entry><title/><url>https://zhang4014439175.github.io/post/string/</url><categories/><tags/><content type="html"> 一、Collectors.joining() 1、拼接字符串 List&lt;String> list = Arrays.asList("Ram","Shyam","Shiv","Mahesh"); String result= list.stream().collect(Collectors.joining()); System.out.println(result); //RamShyamShivMahesh result= list.stream().collect(Collectors.joining(",")); System.out.println(result); //Ram,Shyam,Shiv,Mahesh result= list.stream().collect(Collectors.joining("-","[","]")); System.out.println(result); //[Ram-Shyam-Shiv-Mahesh] 2、拼接对象 package com.concretepage; import java.util.List; import java.util.stream.Collectors; public class JoiningExampleWithListOfObject { public static void main(String[] args) { List&lt;Person> list = new ArrayList&lt;>(); list.add(new Person("Ram", 23)); list.add(new Person("Shyam", 20)); list.add(new Person("Shiv", 25)); list.add(new Person("Mahesh", 30)); String result= list.stream() .map(p -> p.getName()) .collect(Collectors.joining()); System.out.println(result); //RamShyamShivMahesh String result= list.stream() .map(p -> p.getName()) .collect(Collectors.joining("|")); System.out.println(result); //Ram|Shyam|Shiv|Mahesh String result= list.stream().map(p -> p.getName()).collect(Collectors.joining("-","[","]")); System.out.println(result); //[Ram-Shyam-Shiv-Mahesh] String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining()); System.out.println(result); //23202530 String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining("|")); System.out.println(result); //23|20|25|30 String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining("-","[","]")); System.out.println(result); //[23-20-25-30] String result= list.stream() .map(p -> p.getName()+"-" + p.getAge()) .collect(Collectors.joining("|")); System.out.println(result); //Ram-23|Shyam-20|Shiv-25|Mahesh-30 String result= list.stream() .map(p -> p.getName()+"-" + p.getAge()) .collect(Collectors.joining("|","[","]")); System.out.println(result); //[Ram-23|Shyam-20|Shiv-25|Mahesh-30] } } 3、遍历ArrayList中的元素
+List&lt;Coffee> coffees = Stream.generate(new CoffeeSupplier()) .limit(10) .collect(Collectors.toList()); System.out.println(coffees); toString() 打印出类的内存地址
+@Override public String toString() { //return " InfiniteRecursion address: " + this + "\n" //如果你真的想要打印对象的内存地址，应该调用 Object.toString() 方法，这才是负责此任务的方法。所以，不要使用 this，而是应该调用 super.toString() 方法。 } public static void main(String[] args) { Stream.generate(InfiniteRecursion::new) .limit(10) .forEach(System.out::println); } 二、常见方法 length()
+charAt() 获取String中索引位置上的char
+getChars()、getBytes() 复制char或byte到一个目标数组中
+toCharArray() 生成一个char[]，包含String中的所有字符
+equals()、equalsIgnoreCase() 比较两个String的内容是否相同。如果相同，结果为true
+compareTo()、compareToIgnoreCase()
+​ 按词典顺序比较String的内容，比较结果为负数、零或正数。注意，大小写不等价
+contains()
+contentEquals() 如果该String对象与参数的内容完全一致，则返回true
+isEmpty() 返回boolean结果，以表明String对象的长度是否为0
+​ Stringutils.isEmpty() 来判断是否为空null
+regionMatches() 返回boolean结果，以表明所比较区域是否相等
+startsWith() 返回boolean结果，以表明该String是否以传入参数开始
+endsWith() 返回boolean结果，以表明此参数是否是该字符串的后缀
+indexOf() 返回在String中的起始索引，如果不包含此参数，就返回-1；
+lastIndexOf() lastIndexOf()是从后往前搜索
+matches() 返回boolean结果，以表明该String和给出的正则表达式是否匹配
+split() 按照正则表达式拆分String，返回一个结果数组
+join() 用分隔符拼接字符片段，产生一个新的String
+substring() 返回一个新的String对象，以包含参数指定的子串
+concat() 拼接字符串
+replace() 返回替换字符后的新String对象。如果没有替换发生，则返回原始的String对象
+replaceFirst() 返回替换首个目标字符串后的String对象
+replaceAll() 返回替换所有目标字符串后的String对象
+toLowerCase()
+toUpperCase()
+trim() 将String两端的空白符删除后，返回一个新的String对象。
+​ 如果没有任何改变，则返回原始的String对象
+valueOf()
+intern() 为每个唯一的字符序列生成一个且仅生成一个String引用。
+format() 返回格式化结果String
+1、练习 从0 - 100 共25个数字
+String result = new Random(47) .ints(25, 0, 100) .mapToObj(Integer::toString) .collect(Collectors.joining(",")); 三、printf() System.out.printf("Row 1: [%d %f]%n", x, y); 这一行代码在运行的时候，首先将 x 的值插入到 %d_ 的位置，然后将 y 的值插入到 %f 的位置。这些占位符叫做格式修饰符，它们不仅指明了插入数据的位置，同时还指明了将会插入什么类型的变量，以及如何格式化。在这个例子中 %d 表示 x 是一个整数，%f 表示 y 是一个浮点数（float 或者 double）。
+int x = 5; double y = 5.332542; // The old way: System.out.println("Row 1: [" + x + " " + y + "]"); // The new way: System.out.format("Row 1: [%d %f]%n", x, y); // or System.out.printf("Row 1: [%d %f]%n", x, y); /* Output: Row 1: [5 5.332542] Row 1: [5 5.332542] Row 1: [5 5.332542] */ 格式化修饰符 f.format("%-15s %5s %10s%n", "Item", "Qty", "Price"); f.format("%-15s %5s %10s%n", "----", "---", "-----"); f.format("%-15.15s %5d %10.2f%n", name, qty, price); receiptBuilder.add("Jack's Magic Beans", 4, 4.25); receiptBuilder.add("Princess Peas", 3, 5.1); receiptBuilder.add("Three Bears Porridge", 1, 14.29); total += price * qty; f.format("%-15s %5s %10.2f%n", "Tax", "", total * 0.06); f.format("%-15s %5s %10s%n", "", "", "-----"); f.format("%-15s %5s %10.2f%n", "Total", "", total * 1.06); Formatter转换 下面的表格展示了最常用的类型转换：
+类型 含义 d 整型（十进制） c Unicode字符 b Boolean值 s String f 浮点数（十进制） e 浮点数（科学计数） x 整型（十六进制） h 散列码（十六进制） % 字面值“%” 四、正则表达式 System.out.println("-1234".matches("-?\\d+")); System.out.println("5678".matches("-?\\d+")); System.out.println("+911".matches("-?\\d+")); System.out.println("+911".matches("(-|\\+)?\\d+")); /* Output: true true false true */ (-|\+)?
+这个正则表达式表示字符串的起始字符可能是一个 - 或 +，或者二者都没有（因为后面跟着 ? 修饰符）。因为字符 + 在正则表达式中有特殊的意义，所以必须使用 \ 将其转义，使之成为表达式中的一个普通字符。
+String类还自带了一个非常有用的正则表达式工具——split() 方法，其功能是“将字符串从正则表达式匹配的地方切开。”
+public class Splitting { public static String knights = "Then, when you have found the shrubbery, " + "you must cut down the mightiest tree in the " + "forest...with... a herring!"; public static void split(String regex) { System.out.println( Arrays.toString(knights.split(regex))); } public static void main(String[] args) { split(" "); // Doesn't have to contain regex chars split("\\W+"); // Non-word characters split("n\\W+"); // 'n' followed by non-words //按空格来划分字符串。 //一个非单词字符（如果 W 小写，\\w，则表示一个单词字符）。 //表示“字母n后面跟着一个或多个非单词字符。” } } /* Output: [Then,, when, you, have, found, the, shrubbery,, you, must, cut, down, the, mightiest, tree, in, the, forest...with..., a, herring!] [Then, when, you, have, found, the, shrubbery, you, must, cut, down, the, mightiest, tree, in, the, forest, with, a, herring] [The, whe, you have found the shrubbery, you must cut dow, the mightiest tree i, the forest...with... a herring!] */ 用正则表达式进行替换操作时，你可以只替换第一处匹配，也可以替换所有的匹配：
+// strings/Replacing.java public class Replacing { static String s = Splitting.knights; public static void main(String[] args) { System.out.println(s.replaceFirst("f\\w+", "located")); //以字母 f 开头，后面跟一个或多个字母（注意这里的 w 是小写的）。并且只替换掉第一个匹配的部分，所以 “found” 被替换成 “located”。 System.out.println(s.replaceAll("shrubbery|tree|herring","banana")); //第二个表达式要匹配的是三个单词中的任意一个，因为它们以竖线分割表示“或”，并且替换所有匹配的部分。 } } /* Output: Then, when you have located the shrubbery, you must cut down the mightiest tree in the forest...with... a herring! Then, when you have found the banana, you must cut down the mightiest banana in the forest...with... a banana! */ 表达式 含义 B 指定字符B \xhh 十六进制值为0xhh的字符 \uhhhh 十六进制表现为0xhhhh的Unicode字符 \t 制表符Tab \n 换行符 \r 回车 \f 换页 \e 转义（Escape） 当你学会了使用字符类（character classes）之后，正则表达式的威力才能真正显现出来。以下是一些创建字符类的典型方式，以及一些预定义的类：
+表达式 含义 . 任意字符 [abc] 包含a、b或c的任何字符（和`a [^abc] 除a、b和c之外的任何字符（否定） [a-zA-Z] 从a到z或从A到Z的任何字符（范围） [abc[hij]] a、b、c、h、i、j中的任意字符（与`a [a-z&amp;&amp;[hij]] 任意h、i或j（交） \s 空白符（空格、tab、换行、换页、回车） \S 非空白符（[^\s]） \d 数字（[0-9]） \D 非数字（[^0-9]） \w 词字符（[a-zA-Z_0-9]） \W 非词字符（[^\w]） for(String pattern : new String[]{ "Rudolph", "[rR]udolph", "[rR][aeiou][a-z]ol.*", "R.*" }) System.out.println("Rudolph".matches(pattern)); /* Output: true true true true */ 1、量词 贪婪型： 量词总是贪婪的，除非有其他的选项被设置。贪婪表达式会为所有可能的模式发现尽可能多的匹配。导致此问题的一个典型理由就是假定我们的模式仅能匹配第一个可能的字符组，如果它是贪婪的，那么它就会继续往下匹配。
+勉强型： 用问号来指定，这个量词匹配满足模式所需的最少字符数。因此也被称作懒惰的、最少匹配的、非贪婪的或不贪婪的。
+占有型： 目前，这种类型的量词只有在 Java 语言中才可用（在其他语言中不可用），并且也更高级，因此我们大概不会立刻用到它。当正则表达式被应用于 String 时，它会产生相当多的状态，以便在匹配失败时可以回溯。而“占有的”量词并不保存这些中间状态，因此它们可以防止回溯。它们常常用于防止正则表达式失控，因此可以使正则表达式执行起来更高效。
+贪婪型 勉强型 占有型 如何匹配 X? X?? X?+ 一个或零个X X* X*? X*+ 零个或多个X X+ X+? X++ 一个或多个X X{n} X{n}? X{n}+ 恰好n次X X{n,} X{n,}? X{n,}+ 至少n次X X{n,m} X{n,m}? X{n,m}+ X至少n次，但不超过m次 A(B(C))D
+中有三个组：组 0 是 ABCD，组 1 是 BC，组 2 是 C。
+Matcher 对象提供了一系列方法，用以获取与组相关的信息：
+public int groupCount() 返回该匹配器的模式中的分组数目，组 0 不包括在内。 public String group() 返回前一次匹配操作（例如 find()）的第 0 组（整个匹配）。 public String group(int i) 返回前一次匹配操作期间指定的组号，如果匹配成功，但是指定的组没有匹配输入字符串的任何部分，则将返回 null。 public int start(int group) 返回在前一次匹配操作中寻找到的组的起始索引。 public int end(int group) 返回在前一次匹配操作中寻找到的组的最后一个字符索引加一的值。 2、元字符 元字符：即为有特定含义的字符，常见的元字符如下
+代码 说明 . 匹配除换行符以外的任意字符 \w 匹配字母或数字或下划线或汉字 \s 匹配任意的空白符 \d 匹配数字 \b 匹配单词的开始或结束 ^ 匹配字符串的开始（在集合字符里[^a]表示非（不匹配）的意思 $ 匹配字符串的结束 详解和示例：
+（1）. 匹配任何任意字符 例如 . 可以匹配 1，n，*，+，- ,等
+（2）\d\w\s 匹配第一个字符为数字，第二个字符为字母或数字、或下划线或汉字，第三字符为空格的字符串 例如：11 ，2a , 1_
+（3）^\d\d\d$ 匹配三个全部都为数字的字符串 例如： 123,456,789
+还可以用于验证输入的字符串是否符合qq（身份证号）的验证 ： 例如：^\d{8}$ 匹配8位数字的qq号，^\d{15}&amp;匹配15位均为数字的身份证号 （4）\bOlive\b 匹配单词Olive 例如： I Love Oliver and Olive .这个时候返回的是Olive 而不是Oliver,因为\b&hellip;.\b返回的匹配的单词
+3、反义字符 反义字符：多用于查找除某个字符以外其他任意字符均可以的情况
+常用的反义字符如下：
+代码/语法 说明 \W 匹配任意不是字母，数字，下划线，汉字的字符 \S 匹配任意不是空白符的字符 \D 匹配任意非数字的字符 \B 匹配不是单词开头或结束的位置 [^x] 匹配除了x以外的任意字符 [^aeiou] 匹配除了aeiou这几个字母以外的任意字符 详解和示例：
+（1）\W 匹配除字母、数字、下划线、汉字以为的字符形如 +，-，*
+（2）\S 匹配除空格以外的任意字符形如：1，* ，）
+（3）[^abcde]匹配除abcde以为的其他字符 如 e，f，g，h
+4、限定字符 限定字符多用于重复匹配次数
+常用的限定字符如下
+代码/语法 说明 * 重复零次或更多次 + 重复一次或更多次 ? 重复零次或一次 {n} 重复n次 {n,} 重复n次或更多次 {n,m} 重复n到m次 详解和示例：
+（1）\d* 匹配重复0次或多次数字 例如:可能为空 或 任意数字 （2,3。。。。）
+（2）\d+ 匹配重复1次或多次数字 例如:可能为1个或多个数字 1,23,234,2345，&hellip;&hellip;..
+（3）\d? 匹配重复次个或者一次数字 例如：可能为空或者任意的一个数字（1,2，。。。）
+（4）\d{8}匹配重复8次数字 例如：123456768
+（5）\d{4,}匹配重复至少4次数字 例如：1234,12345,124244,。。。。。
+（6）^\d{8,11}$ 匹配重复8-11次数字 例如：12345678,123456789,1234567890,12345678901
+5、转义字符 在实际的开发中，可能会遇到要比配元字符的情况，这个时候就需要进行字符转义，如元字符 . * \ 需要转换为. * \
+例如： 需要匹配qq邮箱 \d{8,}+qq+.+com 在这里的. 就需要加斜杠
+6、字符分枝 字符分枝多用于满足不同情况的选择，用“|”将不同的条件分割开来，比如有些固定电话区号有三位，有些有四位，这个时候可以采用字符分枝
+例如：\d{3}-\d{8}|\d{4}-\d{8} 可以匹配两种不同长度区号的固定电话
+下边的IP地址正则表达式也有用到字符分枝
+7、字符分组 字符分组多用于将多个字符重复，主要通过使用小括号()来进行分组
+形如：（\d\w){3} 重复匹配3次（\d\w)
+常用于表示IP地址 形如： ((25[0-5]|2[0-4][0-9]|[0-1]\d\d).){3}(25[0-5]|2[0-4][0-9]|[0-1]\d\d)
+解析：先把IP地址分为两部分一部分是123.123.123. 另一部分是123，又因Ip最大值为255，所以先使用分组，然后在组里边再进行选择，组里也有三部分，0-199,200-249,250-255，分别和上述的表达是对应，最后还要注意分组之后还要加上一个.，因为是元字符所以要转义故加上. 然后再把这部分整体看做是一个组，重复三次，再加上仅有数字的一组也就是不带.的那一组即可完成IP地址的校验
+常用分组语法
+分类 代码/语法 说明 (exp) 匹配exp,并捕获文本到自动命名的组里 捕 (?exp) 匹配exp,并捕获文本到名称为name的组里，也可以写成(?&rsquo;name&rsquo;exp) 获 (?:exp) 匹配exp,不捕获匹配的文本，也不给此分组分配组号 零 (?=exp) 匹配exp前面的位置 宽 (?&lt;=exp) 匹配exp后面的位置 断 (?!exp) 匹配后面跟的不是exp的位置 言 (?&lt;!exp) 匹配前面不是exp的位置 注释 (?#comment) 这种类型的分组不对正则表达式的处理产生任何影响，用于提供注释让人阅读 8、懒惰匹配和贪婪匹配 贪婪匹配：正则表达式中包含重复的限定符时，通常的行为是匹配尽可能多的字符。
+懒惰匹配，有时候需要匹配尽可能少的字符。
+例如： a.*b，它将会匹配最长的以a开始，以b结束的字符串。如果用它来搜索aabab的话，它会匹配整个字符串aabab。但是我们此时可能需要匹配的是ab这样的话就需要用到懒惰匹配了。懒惰匹配会匹配尽可能少的字符
+常用的懒惰匹配限定符如下
+代码/语法 说明 *? 重复任意次，但尽可能少重复 +? 重复1次或更多次，但尽可能少重复 ?? 重复0次或1次，但尽可能少重复 {n,m}? 重复n到m次，但尽可能少重复 {n,}? 重复n次以上，但尽可能少重复 9、后向引用 后向引用用于重复搜索前面某个分组匹配的文本。
+使用小括号指定一个子表达式后，匹配这个子表达式的文本(也就是此分组捕获的内容)可以在表达式或其它程序中作进一步的处理。默认情况下，每个分组会自动拥有一个组号，规则是：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推
+示例：\b(\w+)\b\s+\1\b可以用来匹配重复的单词，像go go, 或者kitty kitty。
+这个表达式首先是一个单词，也就是单词开始处和结束处之间的多于一个的字母或数字(\b(\w+)\b)，这个单词会被捕获到编号为1的分组中，然后是1个或几个空白符(\s+)，最后是分组1中捕获的内容（也就是前面匹配的那个单词）(\1)。
+你也可以自己指定子表达式的组名。要指定一个子表达式的组名，请使用这样的语法：(?\w+)(或者把尖括号换成&rsquo;也行：(?&lsquo;Word&rsquo;\w+)),这样就把\w+的组名指定为Word了。要反向引用这个分组捕获的内容，你可以使用\k,所以上一个例子也可以写成这样：\b(?\w+)\b\s+\k\b
+10、零宽断言 有时候需要查找某些匹配之前或之后的东西，这个时候就需要用到们像\b,^,$那样用于指定一个位置，这个位置应该满足一定的条件(即断言)，因此它们也被称为零宽断言
+(?=exp)也叫零宽度正预测先行断言，它断言自身出现的位置的后面能匹配表达式exp。比如 \b\w+(?=ing\b)，匹配以ing结尾的单词的前面部分(除了ing以外的部分)，如查找I&rsquo;m singing while you&rsquo;re dancing.时，它会匹配sing和danc。
+(?&lt;=exp)也叫零宽度正回顾后发断言，它断言自身出现的位置的前面能匹配表达式exp。比如(?&lt;=\bre)\w+\b会匹配以re开头的单词的后半部分(除了re以外的部分)，例如在查找reading a book时，它匹配ading。
+11、其他语法 12、常用的实用正则表达式整理 只能输入数字："^[0-9]*$"。
+　只能输入n位的数字："^&ldquo;d{n}$"。
+　只能输入至少n位的数字："^&ldquo;d{n,}$"。
+　只能输入m~n位的数字：。"^&ldquo;d{m,n}$&rdquo;
+　只能输入零和非零开头的数字："^(0|[1-9][0-9]*)$"。
+　只能输入有两位小数的正实数："^[0-9]+(.[0-9]{2})?$"。
+　只能输入有1~3位小数的正实数："^[0-9]+(.[0-9]{1,3})?$"。
+　只能输入非零的正整数："^"+?[1-9][0-9]*$"。
+　只能输入非零的负整数："^&rdquo;-[1-9][]0-9&rdquo;*$。
+　只能输入长度为3的字符："^.{3}$"。
+　只能输入由26个英文字母组成的字符串："^[A-Za-z]+$"。
+　只能输入由26个大写英文字母组成的字符串："^[A-Z]+$"。
+　只能输入由26个小写英文字母组成的字符串："^[a-z]+$"。
+　只能输入由数字和26个英文字母组成的字符串："^[A-Za-z0-9]+$"。
+　只能输入由数字、26个英文字母或者下划线组成的字符串："^&ldquo;w+$"。
+　验证用户密码："^[a-zA-Z]&ldquo;w{5,17}$&ldquo;正确格式为：以字母开头，长度在6~18之间，只能包含字符、数字和下划线。
+　验证是否含有^%&amp;’,;=?$&ldquo;&ldquo;等字符：&rdquo;[^%&amp;’,;=?$&ldquo;x22]+"。
+　只能输入汉字："^[&ldquo;u4e00-&ldquo;u9fa5]{0,}$&rdquo;
+　验证Email地址："^&ldquo;w+([-+.]&ldquo;w+)@&ldquo;w+([-.]&ldquo;w+)&rdquo;.&ldquo;w+([-.]&ldquo;w+)*$"。
+　验证InternetURL："^http://([&ldquo;w-]+&rdquo;.)+[&ldquo;w-]+(/[&ldquo;w-./?%&amp;=]*)?$"。
+　验证电话号码："^(&rdquo;(&ldquo;d{3,4}-)|&ldquo;d{3.4}-)?&ldquo;d{7,8}$&ldquo;正确格式为：&ldquo;XXX-XXXXXXX&rdquo;、&ldquo;XXXX- XXXXXXXX&rdquo;、&ldquo;XXX-XXXXXXX&rdquo;、&ldquo;XXX-XXXXXXXX&rdquo;、&ldquo;XXXXXXX"和"XXXXXXXX&rdquo;。
+　验证身份证号(15位或18位数字)："^&ldquo;d{15}|&ldquo;d{18}$"。
+　验证一年的12个月："^(0?[1-9]|1[0-2])$&ldquo;正确格式为：&ldquo;01"～"09"和"1"～"12&rdquo;。
+　验证一个月的31天："^((0?[1-9])|((1|2)[0-9])|30|31)$&ldquo;正确格式为;&ldquo;01"～"09"和"1"～"31&rdquo;。</content></entry></search>
