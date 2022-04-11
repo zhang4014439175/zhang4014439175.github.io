@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>Stream流的最全分类和应用</title><url>https://zhang4014439175.github.io/post/stream%E6%B5%81/</url><categories><category>Java-Base</category></categories><tags><tag>Java</tag><tag>Stream</tag></tags><content type="html">  Java8 中添加了一个新的接口类 Stream，相当于高级版的Iterator，通过Lambda 表达式对集合进行各种非常便利、高效的聚合操作（Aggregate Operation），或者大批量数据操作(Bulk Data Operation）。Stream不仅可以通过串行的方式实现数据操作，还可以通过并行的方式处理大批量数据，提高数据的处理效率。 在《java8 in action》书中，作者说目前我们在几乎所有开发中都会用到集合，但是目前集合在程序开发中的表现还不够完美，比如你利用集合处理大量数据时，你不得不面对性能问题，不得不考虑进行并行代码的编写，这些工作都是比较繁重的，于是作者便创造了Stream 流。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>Stream流的最全分类和应用</title><url>https://zhang4014439175.github.io/post/stream%E6%B5%81/</url><categories><category>Java-Base</category></categories><tags><tag>Java</tag><tag>Stream</tag></tags><content type="html">  Java8 中添加了一个新的接口类 Stream，相当于高级版的Iterator，通过Lambda 表达式对集合进行各种非常便利、高效的聚合操作（Aggregate Operation），或者大批量数据操作(Bulk Data Operation）。Stream不仅可以通过串行的方式实现数据操作，还可以通过并行的方式处理大批量数据，提高数据的处理效率。
+ 在《java8 in action》书中，作者说目前我们在几乎所有开发中都会用到集合，但是目前集合在程序开发中的表现还不够完美，比如你利用集合处理大量数据时，你不得不面对性能问题，不得不考虑进行并行代码的编写，这些工作都是比较繁重的，于是作者便创造了Stream 流。
 一、Stream流 在Stream流中无法直接修改集合、数组等数据源中的数据，必须重新定义一个来接收结果集。
 stream不存储数据，而是按照特定的规则对数据进行计算，一般会输出结果；
 stream不会改变数据源，通常情况下会产生一个新的集合；
