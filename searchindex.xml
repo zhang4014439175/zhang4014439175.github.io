@@ -91,7 +91,78 @@ Java设计模式之行为型：命令模式
 Java设计模式之行为型：状态模式
 Java设计模式之行为型：备忘录模式
 Java设计模式之行为型：迭代器模式
-Java设计模式之行为型：解释器模式</content></entry><entry><title>Elasticsearch</title><url>https://zhang4014439175.github.io/post/elasticsearch/</url><categories><category>Elasticsearch</category></categories><tags><tag>Elasticsearch</tag><tag>缓存</tag><tag>搜索</tag></tags><content type="html"> 一、es入门 1、docker安装es 、kibana docker run &ndash;name elasticsearch -p 9200:9200 -p 9300:9300 -e &ldquo;discovery.type=single-node&rdquo; -e ES_JAVA_OPTS="-Xms64m -Xmx512m" -v /mydata/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -v /mydata/elasticsearch/data:/usr/share/elasticsearch/data -v /mydata/elasticsearch/plugins:/usr/share/elasticsearch/plugins -d elasticsearch:7.4.2
+Java设计模式之行为型：解释器模式</content></entry><entry><title>Java框架-Spring源码（二）</title><url>https://zhang4014439175.github.io/post/spring%E6%BA%90%E7%A0%81%E4%BA%8C/</url><categories><category>Java-Framework</category><category>Spring</category></categories><tags><tag>Java</tag><tag>框架</tag><tag>Spring</tag></tags><content type="html"> 一、refresh 1、prepareRefresh /** * 前戏，做容器刷新前的准备工作 * 1、设置容器的启动时间 * 2、设置活跃状态为true * 3、设置关闭状态为false * 4、获取Enviroment对象，并加载当前系统的属性值到Enviroment对象中（可扩展） * 5、准备监听器和事件的集合对象，默认为空的集合。 */ 1.1、initPropertySources 重写initPropertySources()方法，添加系统属性
+public class MyClassPathXmlApplicationContext extends ClassPathXmlApplicationContext { public MyClassPathXmlApplicationContext(String... configLocations){ super(configLocations); } @Override protected void initPropertySources() { System.out.println("扩展initPropertySource"); //这里添加了一个name属性到Environment里面，以方便我们在后面用到 getEnvironment().getSystemProperties().put("name","bobo"); //这里要求Environment中必须包含username属性，如果不包含，则抛出异常 getEnvironment().setRequiredProperties("username"); } } public class Test { public static void main(String[] args) { MyClassPathXmlApplicationContext ac = new MyClassPathXmlApplicationContext("applicationContext.xml"); String name = (String) context.getEnvironment().getSystemProperties().get("name"); System.out.println(name); // ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-${username}.xml"); } } 1.2、validateRequiredProperties() @Override protected void initPropertySources() { System.out.println("扩展initPropertySource"); //这里添加了一个name属性到Environment里面，以方便我们在后面用到 getEnvironment().getSystemProperties().put("name","bobo"); //这里要求Environment中必须包含username属性，如果不包含，则抛出异常 getEnvironment().setRequiredProperties("username"); } //获取 2、obtainFreshBeanFactory(); ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory(); 2.1、refreshBeanFactory 2.1.1、customizeBeanFactory 1）介绍
+**allowBeanDefinitionOverriding:**设置是否允许具有相同名称的Bean来覆盖之前的Bean
+　在同一个配置文件中定义两个相同的Bean,编译器就会直接报错,但是我们可以在不同的配置文件中定义两个相同的Bean,这种情况下编译器是允许的,例如 ioc01.xml中定义了一个 id=person的Bean,ioc02中也定义了一个相同的id=person的Bean,Spring通过 allowBeanDefinitionOverriding这个属性来控制,是否允许定义两个相同的Bean,默认值是true,(也就是允许定义两个相同的Bean),只不过后加载的配置文件中的Bean会覆盖掉前面加载的配置文件中的Bean.如果allowBeanDefinitionOverriding的值为false,那么就不允许出现两个相同名称的Bean加载到Spring容器中.这样就会报错
+**allowCircularReferences:**设置是否允许循环引用
+　A依赖B,同时B又依赖A
+　A依赖B,B依赖C,C依赖A
+　这种情况就称为循环引用,Spring默认情况下使允许循环引用的.
+2）源码分析
+allowBeanDefinitionOverriding、allowCircularReferences这两个属性值的设置是在AbstractRefreshableApplicationContext这个类中的,具体的源码如下
+　我们可以看到这里有两个判断条件 this.allowBeanDefinitionOverriding、this.allowCircularReferences,这两个判断条件的值是什么呢?
+　我们在这个类中往上翻,会发现,在该类中这两个属性值都是包装类类型Boolean,而且没有给定初始值,但是包装类类型的默认初始值就是 null啊.
+　所以呢,这两个判断条件都不成立,那么自然而然的DefaultListableBeanFactory类型的beanFactory就不能设置值,那么既然不能设置值,它们的初始值又是什么呢?
+　翻开DefaultListableBeanFactory这个类,我们可以看到这两个属性的默认值都是true,这样的话,我们就可以知道Spring中这两个属性都是默认为true的了.
+3）扩展
+方式一：
+ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("bean1.xml"); context.setAllowBeanDefinitionOverriding(false); context.setAllowCircularReferences(false); 方式二：
+public class MyClassPathXmlApplicationContext extends ClassPathXmlApplicationContext { @Override protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) { //是否允许覆盖同名称的不同定义的对象 //spring默认为true super.setAllowBeanDefinitionOverriding(false); super.setAllowCircularReferences(false); super.customizeBeanFactory(beanFactory); } } ClassPathXmlApplicationContext context = new MyClassPathXmlApplicationContext("bean1.xml"); 问题：到底allowBeanDefinitionOverriding应该设置true还是false？
+spring中默认是true，也就是默认支持名称相同的bean的覆盖。 而springboot中的默认值是false，也就是不支持名称相同的bean被覆盖。 那么我们自己应该如何选择呢？ 这里笔者认为默认不覆盖比较好。因为还是推荐一个系统中不要存在名称相同的bean，否则后者覆盖前者，多人分工合作的时候，难以避免某些bean被覆盖，会出现很多诡异的问题 ，甚至会带来线上真实的业务损失。 bean的名称不相同，依据具体的业务给bean起名字。这样不但可以解决bean名称重复的问题，还可以大大提高程序的可读性与可维护性。 只有当集成了第三方的库，不同库直接由于是多个团队开发的，甚至这些团队属于不同的国家，有可能会出现bean名称相同的情况。这种情况就需要根据实际需求来设置allowBeanDefinitionOverriding的值了。 那我问他又来了，如果能拿到spring上下文对象了，如何此时再设置这个属性，那么这个属性肯定是没有生效的，如何让这个属性生效呢？？？ applicationContext.refresh(); 就是这么简单，调用上下文对象的refresh()方法就 可以了 2.1.2、customizeBeanFactory</content></entry><entry><title>Java框架-Spring源码（一）</title><url>https://zhang4014439175.github.io/post/spring%E6%BA%90%E7%A0%81%E4%B8%80/</url><categories><category>Java-Framework</category><category>Spring</category></categories><tags><tag>Java</tag><tag>框架</tag><tag>Spring</tag></tags><content type="html"> https://www.bilibili.com/video/BV16q4y1n7Fd/?p=3&spm_id_from=pageDriver&vd_source=81d9ec453e0a2eb8337b93642bef5ce0
+一、流程 1、流程 加载xml&mdash;-解析xml&mdash;-封装BeanDefinition&mdash;-实例化&mdash;-放到容器中&mdash;-从容器中获取
+容器 &mdash;- Map &mdash;- 三级缓存
+map k String v object
+​ k class v object
+​ String objectFactory
+​ String BeanDefinition
+BeanFactoryPostProcessor &mdash;- 实例化 &mdash;- 填充属性 &mdash;- 设置Aware接口的属性 &mdash;- BeanPostProcessor : before &mdash;&mdash; 填充属性 &mdash;&mdash; 初始化bean执行init-method方法 &mdash;- BeanPostProcessor : after &mdash;- 完整对象
+填充属性后面属于对象初始化
+2、对象流程 new classpathxmlApplicationContext(“applicationcontext.xml”) | 创建BeanFactory | applicationcontext.xml | xml、yaml、json定义读取配置文件的规范 | bean定义信息BeanDefinition | 反射（BeanFactory） | 实例化bean | 填充属性（prepareBeanFactory(beanFactory)） | BeanPostProcessor : before | 初始化bean执行init-method方法 | BeanPostProcessor : after | 完整bean对象 2.1、实例化bean 1）BeanFactory 反射进行创建
+三种获取方式 Constructor ctor = Class.getDeclareConstructor(); Object obj = ctor,newInstance(); 2.2、实例化和初始化 实例化：堆中开辟一块空间属性都是默认值
+初始化：1）填充属性、赋值
+​ 2）调用具体的初始化方法
+二、PostProcessor后置处理器增强器 1、BeanFactoryPostProcessor 上一步，beanDefinition &mdash;- BeanFactory中间的过程，增强beanDefinition信息
+例子：
+&lt;bean id=datasource class=com.alibaba.druid.pool.DruidDatasource> &lt;property name=username value=${jdbc.username}/> &lt;/bean> 自定义实现类，实现BeanFactoryPostProcessor方法，以对beandefinition进行增强
+自定义 BeanFactoryPostProcessor 实现 BeanFactoryPostProcessor，重写方法，以至于可以更好的对对象进行操作
+1.1、PlaceholderConfigurerSupport 对配置文件中的${}进行替换
+2、BeanPostProcessor AbstractAutowireCapableBeanFactory里面
+2.1、增强bean信息 2.2、AOP AbstractAutoProxyCreator 实现 BeanPostProcessor，createProxy
+在after 和 before 方法里执行AOP
+1）动态代理
+cglib
+jdk
+三、Aware 在不同的阶段要处理不同的工作，应该怎么办？
+观察者模式： 监听器，监听事件，多播器。
+四、SpringBean 分为普通对象和容器对象
+普通对象： 我们自定义需要的对象
+容器对象：内置对象，spring需要的对象
+五、FactoryBean FactoryBean：只需要调用getObject就可以返回具体的对象，整个对象的创建过程由用户自己来控制，用来创建一些更加复杂的、个性化的bean。一种Bean创建的一种方式，对Bean的一种扩展。对于复杂的Bean对象初始化创建使用其可封装对象的创建细节。它是一个可以返回bean的实例的工厂bean，实现这个接口可以对bean进行一些额外的操作，例如根据不同的配置类型返回不同类型的bean，简化xml配置等。
+​ getObject：
+​ isSingleton
+​ getObjectType
+BeanFactory：它是IoC容器的顶级接口，是IoC容器的底层基础实现，也是访问Spring容器的根接口，负责对bean的创建，访问等工作。需要完整的创建过程、这个过程是spring来控制的 。
+它在使用上也有些特殊，BeanFactory接口中有一个字符常量String FACTORY_BEAN_PREFIX = &ldquo;&amp;&rdquo;; 当我们去获取BeanFactory类型的bean时，如果beanName不加&amp;则获取到对应bean的实例;如果beanName加上&amp;，则获取到BeanFactory本身的实例。
+区别：BeanFactory是个Factory，也就是IOC容器或对象工厂，而FactoryBean就是个Bean。在Spring中，所有的Bean都是由BeanFactory(也就是IOC容器)来进行管理的。但对FactoryBean而言，这个Bean不是简单的Bean，而是一个能生产或者修饰对象生成的工厂Bean,它的实现与设计模式中的工厂模式和修饰器模式类似。
+ListableBeanFactory
+ConfigurationBeanFactory
+CustomizeBeanFactory
+​ allowBeanDefinitionOverriding
+​ allowCircularReferences
+loadBeanDefinitions ( beanFactory )
+六、BeanDefinition beanDefinitionMap
+RootBeanDefinition
+GerericBeanDefinition
+BeanDefinition合并
+七、BeanDefinitionReader 八、调用方法 1、refresh方法 位置：AbstractApplicationContext 517行
+prepareRefresh方法：
+ObtainFreshBeanFactory
+AbstractApplicationContext refresh开始
+invokeBeanFactoryPostProcessors方法：
+Tomcat入口，ServletWebServerApplicationContext的150行，onRefresh方法
+九、常见问题 1、详细了解每一个步骤 如果需要在bean对象创建过程中，详细了解每一个步骤完成的进度应该怎么做？在不同的阶段要做不同的处理工作，应该怎么办？
+观察者模式：监听器、监听事件</content></entry><entry><title>Elasticsearch</title><url>https://zhang4014439175.github.io/post/elasticsearch/</url><categories><category>Elasticsearch</category></categories><tags><tag>Elasticsearch</tag><tag>缓存</tag><tag>搜索</tag></tags><content type="html"> 一、es入门 1、docker安装es 、kibana docker run &ndash;name elasticsearch -p 9200:9200 -p 9300:9300 -e &ldquo;discovery.type=single-node&rdquo; -e ES_JAVA_OPTS="-Xms64m -Xmx512m" -v /mydata/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -v /mydata/elasticsearch/data:/usr/share/elasticsearch/data -v /mydata/elasticsearch/plugins:/usr/share/elasticsearch/plugins -d elasticsearch:7.4.2
 docker run &ndash;name kibana -e ELASTICSEARCH_HOSTS=http://192.168.56.102:9200 -p 5601:5601 -d kibana:7.4.2
 2、查看节点信息
 http://192.168.56.10:9200/_cat/nodes
@@ -380,7 +451,7 @@ Q2&ndash;>绑定的是
 2）实战
 设置消息TTL过期
 public class Consumer01 { //普通交换机名称 private static final String NORMAL_EXCHANGE = "normal_exchange"; //死信交换机名称 private static final String DEAD_EXCHANGE = "dead_exchange"; //普通队列 private static final String NORMAL_QUEUE = "normal_queue"; private static final String DEAD_QUEUE = "dead_queue"; public static void main(String[] args) throws Exception{ Channel channel = RabbitMqUtils.getChannel(); channel.exchangeDeclare(NORMAL_EXCHANGE, BuiltinExchangeType.DIRECT); channel.exchangeDeclare(DEAD_EXCHANGE, BuiltinExchangeType.DIRECT); Map&lt;String, Object> arguments = new HashMap&lt;>(); arguments.put("x-dead-letter-exchange", DEAD_EXCHANGE); arguments.put("x-dead-letter-routing-key", "lisi"); arguments.put("x-message-ttl", 10000); channel.queueDeclare(NORMAL_QUEUE, false, false, false, arguments); channel.queueDeclare(DEAD_QUEUE, false, false, false, null); channel.queueBind(NORMAL_QUEUE, NORMAL_EXCHANGE, "zhangsan"); channel.queueBind(DEAD_QUEUE, DEAD_EXCHANGE, "lisi"); System.out.println("等待接收消息。。。"); DeliverCallback deliverCallback = (consummerTag, message) -> { System.out.println("Consumer01接收的消息：" + new String(message.getBody(), "UTF-8")); }; channel.basicConsume(NORMAL_QUEUE, true, deliverCallback, consumerTag -> {}); } } 队列达到最大长度
-Map&lt;String, Object> arguments = new HashMap&lt;>(); arguments.put("x-dead-letter-exchange", DEAD_EXCHANGE); arguments.put("x-dead-letter-routing-key", "lisi"); //arguments.put("x-message-ttl", 10000); arguments.put("x-max-length", 6); channel.queueDeclare(NORMAL_QUEUE, false, false, false, arguments); channel.queueDeclare(DEAD_QUEUE, false, false, false, null);</content></entry><entry><title>docker（二）docker-compose</title><url>https://zhang4014439175.github.io/post/docker%E5%9B%9B/</url><categories><category>运维部署</category></categories><tags><tag>docker</tag><tag>容器化技术</tag><tag>网络</tag><tag>微服务</tag></tags><content type="html"> 一、dockerfile Dockerfile是用来构建Docker镜像的文本文件，是由一条条构建镜像所需的指令和参数构成的脚本。
+Map&lt;String, Object> arguments = new HashMap&lt;>(); arguments.put("x-dead-letter-exchange", DEAD_EXCHANGE); arguments.put("x-dead-letter-routing-key", "lisi"); //arguments.put("x-message-ttl", 10000); arguments.put("x-max-length", 6); channel.queueDeclare(NORMAL_QUEUE, false, false, false, arguments); channel.queueDeclare(DEAD_QUEUE, false, false, false, null);</content></entry><entry><title>docker（四）docker-compose</title><url>https://zhang4014439175.github.io/post/docker%E5%9B%9B/</url><categories><category>运维部署</category></categories><tags><tag>docker</tag><tag>容器化技术</tag><tag>网络</tag><tag>微服务</tag></tags><content type="html"> 一、dockerfile Dockerfile是用来构建Docker镜像的文本文件，是由一条条构建镜像所需的指令和参数构成的脚本。
 1、介绍 编写dockerfile文件、docker build命令构建镜像、docker run依镜像运行容器实例
 1）基础知识 ​ 每条保留字指令都必须为大写字母且后面要跟随至少一个参数
 ​ 指令按照从上到下，顺序执行
@@ -490,7 +561,71 @@ Compose允许用户通过一个单独的 docker-compose.yml模板文件 （YAML 
 mysql数据
 docker run -p 3306:3306 --name mysql57 --privileged=true -v /zzyyuse/mysql/conf:/etc/mysql/conf.d -v /zzyyuse/mysql/logs:/logs -v /zzyyuse/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7 docker build -t zzyy_docker:1.6 .
 version: "3" serices: microService: image: lizi-security container_name: ms01 ports: - "8001:8001" volumes: - /app/microService:/data networks: - lizi_net depends_on: - redis - mysql redis:  image: redis:6.0.8  ports:  - "6379:6379"  volumes:  - /app/redis/redis.conf:/etc/redis/redis.conf  - /app/redis/data:/data  networks:  - lizi_net  command: redis-server /etc/redis/redis.conf   mysql:  image: mysql:5.7  environment:  MYSQL_ROOT_PASSWORD: '123456'  MYSQL_ALLOW_EMPTY_PASSWORD: 'no'  MYSQL_DATABASE: 'db2021'  MYSQL_USER: 'zzyy'  MYSQL_PASSWORD: 'zzyy123'  ports:  - "3306:3306"  volumes:  - /app/mysql/db:/var/lib/mysql  - /app/mysql/conf/my.cnf:/etc/my.cnf  - /app/mysql/init:/docker-entrypoint-initdb.d  networks:  - lizi_net  command: --default-authentication-plugin=mysql_native_password #解决外部无法访问  networks:  lizi_net: #新建网段 四、监控和统计 1、Portainer Portainer 是一款轻量级的应用，它提供了图形化界面，用于方便地管理Docker环境，包括单机环境和集群环境。
-docker volume create portainer_date docker run -d -p 8000:8000 -p 9000:9000 --name portainer \ --restart=always \ #跟着docker重启 -v /var/run/docker.sock:/var/run/docker.sock \ -v portainer_data:/data \ portainer/portainer-ce:2.9.3 2、CAdvisor监控收集+InfluxDB存储数据+Granfana展示图表 version:'3.1'volumes:grafana_data:{}services:influxdb:image:tutum/influxdb:0.9 restart:always environment:- PRE_CREATE_DB=cadvisor ports:- "8083:8083"- "8086:8086"volumes:- ./data/influxdb:/data cadvisor:image:google/cadvisor links:- influxdb:influxsrv command:-storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influxsrv:8086 restart:always ports:- "8080:8080"volumes:- /:/rootfs:ro - /var/run:/var/run:rw - /sys:/sys:ro - /var/lib/docker/:/var/lib/docker:ro grafana:user:"104"image:grafana/grafana user:"104"restart:always links:- influxdb:influxsrv ports:- "3000:3000"volumes:- grafana_data:/var/lib/grafana environment:- HTTP_USER=admin - HTTP_PASS=admin - INFLUXDB_HOST=influxsrv - INFLUXDB_PORT=8086 - INFLUXDB_NAME=cadvisor - INFLUXDB_USER=root - INFLUXDB_PASS=root</content></entry><entry><title>docker（二）镜像</title><url>https://zhang4014439175.github.io/post/docker%E4%BA%8C/</url><categories><category>运维部署</category></categories><tags><tag>docker</tag><tag>容器化技术</tag><tag>镜像</tag></tags><content type="html"> 一、镜像分层 1、UnionFS（联合文件系统）： Union文件系统（UnionFS）是一种分层、轻量级并且高性能的文件系统，它支持 对文件系统的修改作为一次提交来一层层的叠加， 同时可以将不同目录挂载到同一个虚拟文件系统下(unite several directories into a single virtual filesystem)。Union 文件系统是 Docker 镜像的基础。 镜像可以通过分层来进行继承 ，基于基础镜像（没有父镜像），可以制作各种具体的应用镜像。
+docker volume create portainer_date docker run -d -p 8000:8000 -p 9000:9000 --name portainer \ --restart=always \ #跟着docker重启 -v /var/run/docker.sock:/var/run/docker.sock \ -v portainer_data:/data \ portainer/portainer-ce:2.9.3 2、CAdvisor监控收集+InfluxDB存储数据+Granfana展示图表 version:'3.1'volumes:grafana_data:{}services:influxdb:image:tutum/influxdb:0.9 restart:always environment:- PRE_CREATE_DB=cadvisor ports:- "8083:8083"- "8086:8086"volumes:- ./data/influxdb:/data cadvisor:image:google/cadvisor links:- influxdb:influxsrv command:-storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influxsrv:8086 restart:always ports:- "8080:8080"volumes:- /:/rootfs:ro - /var/run:/var/run:rw - /sys:/sys:ro - /var/lib/docker/:/var/lib/docker:ro grafana:user:"104"image:grafana/grafana user:"104"restart:always links:- influxdb:influxsrv ports:- "3000:3000"volumes:- grafana_data:/var/lib/grafana environment:- HTTP_USER=admin - HTTP_PASS=admin - INFLUXDB_HOST=influxsrv - INFLUXDB_PORT=8086 - INFLUXDB_NAME=cadvisor - INFLUXDB_USER=root - INFLUXDB_PASS=root</content></entry><entry><title>docker（三）集群</title><url>https://zhang4014439175.github.io/post/docker%E4%B8%89%E5%AE%89%E8%A3%85mysql%E5%92%8Credis%E9%9B%86%E7%BE%A4/</url><categories><category>运维部署</category></categories><tags><tag>docker</tag><tag>容器化技术</tag><tag>集群</tag></tags><content type="html"> 一、mysql主从复制 新建主服务器容器实例3307
+进入/mydata/mysql-master/conf目录下新建my.cnf
+[mysqld] ## 设置server_id，同一局域网中需要唯一 server_id=101 ## 指定不需要同步的数据库名称 binlog-ignore-db=mysql ## 开启二进制日志功能 log-bin=mall-mysql-bin ## 设置二进制日志使用内存大小（事务） binlog_cache_size=1M ## 设置使用的二进制日志格式（mixed,statement,row） binlog_format=mixed ## 二进制日志过期清理时间。默认值为0，表示不自动清理。 expire_logs_days=7 ## 跳过主从复制中遇到的所有错误或指定类型的错误，避免slave端复制中断。 ## 如：1062错误是指一些主键重复，1032错误是因为主从数据库数据不一致 slave_skip_errors=1062 修改完配置后重启master实例
+进入mysql-master容器
+master容器实例内创建数据同步用户
+CREATE USER 'slave'@'%' IDENTIFIED BY '123456'; GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'slave'@'%'; 新建从服务器容器实例3308
+进入/mydata/mysql-slave/conf目录下新建my.cnf
+[mysqld] ## 设置server_id，同一局域网中需要唯一 server_id=102 ## 指定不需要同步的数据库名称 binlog-ignore-db=mysql ## 开启二进制日志功能，以备Slave作为其它数据库实例的Master时使用 log-bin=mall-mysql-slave1-bin ## 设置二进制日志使用内存大小（事务） binlog_cache_size=1M ## 设置使用的二进制日志格式（mixed,statement,row） binlog_format=mixed ## 二进制日志过期清理时间。默认值为0，表示不自动清理。 expire_logs_days=7 ## 跳过主从复制中遇到的所有错误或指定类型的错误，避免slave端复制中断。 ## 如：1062错误是指一些主键重复，1032错误是因为主从数据库数据不一致 slave_skip_errors=1062 ## relay_log配置中继日志 relay_log=mall-mysql-relay-bin ## log_slave_updates表示slave将复制事件写进自己的二进制日志 log_slave_updates=1 ## slave设置为只读（具有super权限的用户除外） read_only=1 修改完配置后重启slave实例
+docker restart mysql-slave 在主数据库中查看主从同步状态
+show master status; 进入mysql-slave容器
+docker exec -it mysql-slave /bin/bash 在从数据库中配置主从复制
+change master to master_host='宿主机ip', master_user='slave', master_password='123456', master_port=3307, master_log_file='mall-mysql-bin.000001', master_log_pos=617, master_connect_retry=30; 在从数据库中查看主从同步状态
+show slave status \G; 在从数据库中开启主从同步
+mysql中 start slave 查看从数据库状态发现已经同步
+主从复制测试
+docker run -p 3307:3306 --name mysql-master \ -v /mydata/mysql-master/log:/var/log/mysql \ -v /mydata/mysql-master/data:/var/lib/mysql \ -v /mydata/mysql-master/conf:/etc/mysql \ -e MYSQL_ROOT_PASSWORD=root \ -d mysql:5.7 二、redis集群 1、hash取余分区 2亿条记录就是2亿个k,v，我们单机不行必须要分布式多机，假设有3台机器构成一个集群，用户每次读写操作都是根据公式：
+​ hash(key) % N个机器台数，计算出哈希值，用来决定数据映射到哪一个节点上。
+1）优点 简单粗暴，直接有效，只需要预估好数据规划好节点，例如3台、8台、10台，就能保证一段时间的数据支撑。使用Hash算法让固定的一部分请求落到同一台服务器上，这样每台服务器固定处理一部分请求（并维护这些请求的信息），起到负载均衡+分而治之的作用。
+2）缺点 原来规划好的节点，进行扩容或者缩容就比较麻烦了额，不管扩缩，每次数据变动导致节点有变动，映射关系需要重新进行计算，在服务器个数固定不变时没有问题，如果需要弹性扩容或故障停机的情况下，原来的取模公式就会发生变化：Hash(key)/3会变成Hash(key) /?。此时地址经过取余运算的结果将发生很大变化，根据公式获取的服务器也会变得不可控。
+某个redis机器宕机了，由于台数数量变化，会导致hash取余全部数据重新洗牌。
+2、一致性hash算法分区 一致性哈希算法在1997年由麻省理工学院中提出的，设计目标是为了解决
+分布式缓存数据 变动和映射问题 ，某个机器宕机了，分母数量改变了，自然取余数不OK了。
+提出一致性Hash解决方案。目的是当服务器个数发生变动时，尽量减少影响客户端到服务器的映射关系
+1）一致性哈希环 一致性哈希算法必然有个hash函数并按照算法产生hash值，这个算法的所有可能哈希值会构成一个全量集，这个集合可以成为一个hash空间[0,2^32-1]，这个是一个线性空间，但是在算法中，我们通过适当的逻辑控制将它首尾相连(0 = 2^32),这样让它逻辑上形成了一个环形空间。
+它也是按照使用取模的方法，前面笔记介绍的节点取模法是对节点（服务器）的数量进行取模。而一致性Hash算法是对2^32取模，简单来说， 一致性Hash算法将整个哈希值空间组织成一个虚拟的圆环 ，如假设某哈希函数H的值空间为0-2^32-1（即哈希值是一个32位无符号整形），整个哈希环如下图：整个空间 按顺时针方向组织 ，圆环的正上方的点代表0，0点右侧的第一个点代表1，以此类推，2、3、4、……直到2^32-1，也就是说0点左侧的第一个点代表2^32-1， 0和2^32-1在零点中方向重合，我们把这个由2^32个点组成的圆环称为Hash环。
+2）节点映射 将集群中各个IP节点映射到环上的某一个位置。
+将各个服务器使用Hash进行一个哈希，具体可以选择服务器的IP或主机名作为关键字进行哈希，这样每台机器就能确定其在哈希环上的位置。假如4个节点NodeA、B、C、D，经过IP地址的 哈希函数 计算(hash(ip))，使用IP地址哈希后在环空间的位置如下：
+3）key落到服务器的落键规则 当我们需要存储一个kv键值对时，首先计算key的hash值，hash(key)，将这个key使用相同的函数Hash计算出哈希值并确定此数据在环上的位置， 从此位置沿环顺时针“行走” ，第一台遇到的服务器就是其应该定位到的服务器，并将该键值对存储在该节点上。
+如我们有Object A、Object B、Object C、Object D四个数据对象，经过哈希计算后，在环空间上的位置如下：根据一致性Hash算法，数据A会被定为到Node A上，B被定为到Node B上，C被定为到Node C上，D被定为到Node D上。
+①优点
+一致性哈希算法的容错性
+​ 假设Node C宕机，可以看到此时对象A、B、D不会受到影响，只有C对象被重定位到Node D。一般的，在一致性Hash算法中，如果一台服务器不可用，则 受影响的数据仅仅是此服务器到其环空间中前一台服务器（即沿着逆时针方向行走遇到的第一台服务器）之间数据 ，其它不会受到影响。简单说，就是C挂了，受到影响的只是B、C之间的数据，并且这些数据会转移到D进行存储。
+一致性哈希算法的扩展性
+​ 数据量增加了，需要增加一台节点NodeX，X的位置在A和B之间，那收到影响的也就是A到X之间的数据，重新把A到X的数据录入到X上即可， 不会导致hash取余全部数据重新洗牌。
+②缺点
+Hash环的数据倾斜问题
+一致性Hash算法在服务 节点太少时 ，容易因为节点分布不均匀而造成 数据倾斜 （被缓存的对象大部分集中缓存在某一台服务器上）问题，
+3、hash槽分区 1） 为什么出现 哈希槽实质就是一个数组，数组[0,2^14 -1]形成hash slot空间。 16384
+2） 能干什么 解决均匀分配的问题， 在数据和节点之间又加入了一层，把这层称为哈希槽（slot），用于管理数据和节点之间的关系 ，现在就相当于节点上放的是槽，槽里放的是数据。
+槽解决的是粒度问题，相当于把粒度变大了，这样便于数据移动。
+哈希解决的是映射问题，使用key的哈希值来计算所在的槽，便于数据分配。
+3） 多少个hash槽 一个集群只能有16384个槽，编号0-16383（0-2^14-1）。这些槽会分配给集群中的所有主节点，分配策略没有要求。可以指定哪些编号的槽分配给哪个主节点。集群会记录节点和槽的对应关系。解决了节点和槽的关系后，接下来就需要对key求哈希值，然后对16384取余，余数是几key就落入对应的槽里。slot = CRC16(key) % 16384。以槽为单位移动数据，因为槽的数目是固定的，处理起来比较容易，这样数据移动问题就解决了。
+为什么redis最大槽数是16384个？
+4） hash槽计算 Redis 集群中内置了 16384 个哈希槽，redis 会根据节点数量大致均等的将哈希槽映射到不同的节点。当需要在 Redis 集群中放置一个 key-value时，redis 先对 key 使用 crc16 算法算出一个结果，然后把结果对 16384 求余数，这样每个 key 都会对应一个编号在 0-16383 之间的哈希槽，也就是映射到某个节点上。如下代码，key之A 、B在Node2， key之C落在Node3上
+SlotHash.getSlot("A") //6373 SlotHash.getSlot("B") //10374 SlotHash.getSlot("C") //14503 SlotHash.getSlot("HELLO")//866 4、redis集群 docker run -d --name redis-node-1 --net host --privileged=true -v /data/redis/share/redis-node-1:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6381  docker run -d --name redis-node-2 --net host --privileged=true -v /data/redis/share/redis-node-2:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6382  docker run -d --name redis-node-3 --net host --privileged=true -v /data/redis/share/redis-node-3:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6383  docker run -d --name redis-node-4 --net host --privileged=true -v /data/redis/share/redis-node-4:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6384  docker run -d --name redis-node-5 --net host --privileged=true -v /data/redis/share/redis-node-5:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6385  docker run -d --name redis-node-6 --net host --privileged=true -v /data/redis/share/redis-node-6:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6386 --net host 使用宿主机的IP和端口，默认 --privileged=true 获取宿主机root用户权限 -v /data/redis/share/redis-node-6:/data 容器卷，宿主机地址:docker内部地址 redis:6.0.8 redis镜像和版本号 --cluster-enabled yes 开启redis集群 --appendonly yes 开启持久化 --port 6386 redis端口号 redis-cli --cluster create 192.168.111.147:6381 192.168.111.147:6382 192.168.111.147:6383 192.168.111.147:6384 192.168.111.147:6385 192.168.111.147:6386 --cluster-replicas 1 5、数据读写存储 1）查看集群状态 redis-cli -p 6381 cluster info cluster nodes set k1 v1 分配槽时，分配到别的节点就会报错error redis-cli -p 6381 -c 另一种方法
+redis -cli --cluster check 192.168.111.167:6381 2）使用集群命令 6、容错切换迁移 1号主节点宕机，4号从节点成为主节点。
+1号主节点恢复，成为从节点。需要手动切换
+7、主从扩容 1）步骤
+​ 新建两个节点，一主一从
+​ 进入容器内部
+​ 将新增的6387节点作为master节点加入原集群
+​ 检查集群情况第1次
+​ 重新分派槽号
+​ 检查集群情况第2次
+​ 为主节点6387分配从节点6388
+命令：redis-cli --cluster add-node ip:新slave端口 ip:新master端口 --cluster-slave --cluster-master-id 新主机节点ID  redis-cli --cluster add-node 192.168.111.147:6388 192.168.111.147:6387 --cluster-slave --cluster-master-id e4781f644d4a4e4d4b4d107157b9ba8144631451-------这个是6387的编号，按照自己实际情况 ​ 检查集群情况第3次
+2）重新分配槽位
+redis cli -- cluster reshard 192.168.111.117:6381 how many slots do you want to move (from 1 to 16384)? 4096 what is the receiving node ID? 新加节点的id redis -cli --cluster check 192.168.111.167:6381 每个节点平均给新节点分配了一点槽位
+8、主从缩容 目的：6387和6388下线
+检查集群情况1获得6388的节点ID
+redis-cli --cluster check 192.168.111.147:6382 将6388删除，从集群中将4号从节点6388删除
+命令：redis-cli --cluster del-node ip:从机端口 从机6388节点ID redis-cli --cluster del-node 192.168.111.147:6388 5d149074b7e57b802287d1797a874ed7a1a284a8 将6387的槽号清空，重新分配，本例将清出来的槽号都给6381
+how many slots do you want to move (from 1 to 16384)? 4096 what is the receiving node ID? 新加节点的id 6381 source node #1: 要删除的master source node #2: done 检查集群情况第二次
+将6387删除
+redis-cli --cluster del-node 192.168.111.147:6388 5d149074b7e57b802287d1797a874ed7a1a284a8 检查集群情况第三次</content></entry><entry><title>docker（二）镜像</title><url>https://zhang4014439175.github.io/post/docker%E4%BA%8C/</url><categories><category>运维部署</category></categories><tags><tag>docker</tag><tag>容器化技术</tag><tag>镜像</tag></tags><content type="html"> 一、镜像分层 1、UnionFS（联合文件系统）： Union文件系统（UnionFS）是一种分层、轻量级并且高性能的文件系统，它支持 对文件系统的修改作为一次提交来一层层的叠加， 同时可以将不同目录挂载到同一个虚拟文件系统下(unite several directories into a single virtual filesystem)。Union 文件系统是 Docker 镜像的基础。 镜像可以通过分层来进行继承 ，基于基础镜像（没有父镜像），可以制作各种具体的应用镜像。
 特性：一次同时加载多个文件系统，但从外面看起来，只能看到一个文件系统，联合加载会把各层文件系统叠加起来，这样最终的文件系统会包含所有底层的文件和目录
 2、镜像加载原理 1）Docker镜像加载原理：
 docker的镜像实际上由一层一层的文件系统组成，这种层级的文件系统UnionFS。
@@ -574,71 +709,7 @@ SHOW VARIABLES LIKE &lsquo;character%&rsquo;
 3）中文乱码、数据备份、敏感数据迁移
 4）实战
 docker run -d -p 3306:3306 --privileged=true -v /zzyyuse/mysql/log:/var/log/mysql -v /zzyyuse/mysql/data:/var/lib/mysql -v /zzyyuse/mysql/conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=123456 --name mysql mysql:5.7 新建my.cnf
-[client] default_character_set=utf8 [mysqld] collation_server = utf8_general_ci character_set_server = utf8 4、Redis docker run -p 6379:6379 --name myr3 --privileged=true -v /app/redis/redis.conf:/etc/redis/redis.conf -v /app/redis/data:/data -d redis:6.0.8 redis-server /etc/redis/redis.conf</content></entry><entry><title>docker（二）集群</title><url>https://zhang4014439175.github.io/post/docker%E4%B8%89%E5%AE%89%E8%A3%85mysql%E5%92%8Credis%E9%9B%86%E7%BE%A4/</url><categories><category>运维部署</category></categories><tags><tag>docker</tag><tag>容器化技术</tag><tag>集群</tag></tags><content type="html"> 一、mysql主从复制 新建主服务器容器实例3307
-进入/mydata/mysql-master/conf目录下新建my.cnf
-[mysqld] ## 设置server_id，同一局域网中需要唯一 server_id=101 ## 指定不需要同步的数据库名称 binlog-ignore-db=mysql ## 开启二进制日志功能 log-bin=mall-mysql-bin ## 设置二进制日志使用内存大小（事务） binlog_cache_size=1M ## 设置使用的二进制日志格式（mixed,statement,row） binlog_format=mixed ## 二进制日志过期清理时间。默认值为0，表示不自动清理。 expire_logs_days=7 ## 跳过主从复制中遇到的所有错误或指定类型的错误，避免slave端复制中断。 ## 如：1062错误是指一些主键重复，1032错误是因为主从数据库数据不一致 slave_skip_errors=1062 修改完配置后重启master实例
-进入mysql-master容器
-master容器实例内创建数据同步用户
-CREATE USER 'slave'@'%' IDENTIFIED BY '123456'; GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'slave'@'%'; 新建从服务器容器实例3308
-进入/mydata/mysql-slave/conf目录下新建my.cnf
-[mysqld] ## 设置server_id，同一局域网中需要唯一 server_id=102 ## 指定不需要同步的数据库名称 binlog-ignore-db=mysql ## 开启二进制日志功能，以备Slave作为其它数据库实例的Master时使用 log-bin=mall-mysql-slave1-bin ## 设置二进制日志使用内存大小（事务） binlog_cache_size=1M ## 设置使用的二进制日志格式（mixed,statement,row） binlog_format=mixed ## 二进制日志过期清理时间。默认值为0，表示不自动清理。 expire_logs_days=7 ## 跳过主从复制中遇到的所有错误或指定类型的错误，避免slave端复制中断。 ## 如：1062错误是指一些主键重复，1032错误是因为主从数据库数据不一致 slave_skip_errors=1062 ## relay_log配置中继日志 relay_log=mall-mysql-relay-bin ## log_slave_updates表示slave将复制事件写进自己的二进制日志 log_slave_updates=1 ## slave设置为只读（具有super权限的用户除外） read_only=1 修改完配置后重启slave实例
-docker restart mysql-slave 在主数据库中查看主从同步状态
-show master status; 进入mysql-slave容器
-docker exec -it mysql-slave /bin/bash 在从数据库中配置主从复制
-change master to master_host='宿主机ip', master_user='slave', master_password='123456', master_port=3307, master_log_file='mall-mysql-bin.000001', master_log_pos=617, master_connect_retry=30; 在从数据库中查看主从同步状态
-show slave status \G; 在从数据库中开启主从同步
-mysql中 start slave 查看从数据库状态发现已经同步
-主从复制测试
-docker run -p 3307:3306 --name mysql-master \ -v /mydata/mysql-master/log:/var/log/mysql \ -v /mydata/mysql-master/data:/var/lib/mysql \ -v /mydata/mysql-master/conf:/etc/mysql \ -e MYSQL_ROOT_PASSWORD=root \ -d mysql:5.7 二、redis集群 1、hash取余分区 2亿条记录就是2亿个k,v，我们单机不行必须要分布式多机，假设有3台机器构成一个集群，用户每次读写操作都是根据公式：
-​ hash(key) % N个机器台数，计算出哈希值，用来决定数据映射到哪一个节点上。
-1）优点 简单粗暴，直接有效，只需要预估好数据规划好节点，例如3台、8台、10台，就能保证一段时间的数据支撑。使用Hash算法让固定的一部分请求落到同一台服务器上，这样每台服务器固定处理一部分请求（并维护这些请求的信息），起到负载均衡+分而治之的作用。
-2）缺点 原来规划好的节点，进行扩容或者缩容就比较麻烦了额，不管扩缩，每次数据变动导致节点有变动，映射关系需要重新进行计算，在服务器个数固定不变时没有问题，如果需要弹性扩容或故障停机的情况下，原来的取模公式就会发生变化：Hash(key)/3会变成Hash(key) /?。此时地址经过取余运算的结果将发生很大变化，根据公式获取的服务器也会变得不可控。
-某个redis机器宕机了，由于台数数量变化，会导致hash取余全部数据重新洗牌。
-2、一致性hash算法分区 一致性哈希算法在1997年由麻省理工学院中提出的，设计目标是为了解决
-分布式缓存数据 变动和映射问题 ，某个机器宕机了，分母数量改变了，自然取余数不OK了。
-提出一致性Hash解决方案。目的是当服务器个数发生变动时，尽量减少影响客户端到服务器的映射关系
-1）一致性哈希环 一致性哈希算法必然有个hash函数并按照算法产生hash值，这个算法的所有可能哈希值会构成一个全量集，这个集合可以成为一个hash空间[0,2^32-1]，这个是一个线性空间，但是在算法中，我们通过适当的逻辑控制将它首尾相连(0 = 2^32),这样让它逻辑上形成了一个环形空间。
-它也是按照使用取模的方法，前面笔记介绍的节点取模法是对节点（服务器）的数量进行取模。而一致性Hash算法是对2^32取模，简单来说， 一致性Hash算法将整个哈希值空间组织成一个虚拟的圆环 ，如假设某哈希函数H的值空间为0-2^32-1（即哈希值是一个32位无符号整形），整个哈希环如下图：整个空间 按顺时针方向组织 ，圆环的正上方的点代表0，0点右侧的第一个点代表1，以此类推，2、3、4、……直到2^32-1，也就是说0点左侧的第一个点代表2^32-1， 0和2^32-1在零点中方向重合，我们把这个由2^32个点组成的圆环称为Hash环。
-2）节点映射 将集群中各个IP节点映射到环上的某一个位置。
-将各个服务器使用Hash进行一个哈希，具体可以选择服务器的IP或主机名作为关键字进行哈希，这样每台机器就能确定其在哈希环上的位置。假如4个节点NodeA、B、C、D，经过IP地址的 哈希函数 计算(hash(ip))，使用IP地址哈希后在环空间的位置如下：
-3）key落到服务器的落键规则 当我们需要存储一个kv键值对时，首先计算key的hash值，hash(key)，将这个key使用相同的函数Hash计算出哈希值并确定此数据在环上的位置， 从此位置沿环顺时针“行走” ，第一台遇到的服务器就是其应该定位到的服务器，并将该键值对存储在该节点上。
-如我们有Object A、Object B、Object C、Object D四个数据对象，经过哈希计算后，在环空间上的位置如下：根据一致性Hash算法，数据A会被定为到Node A上，B被定为到Node B上，C被定为到Node C上，D被定为到Node D上。
-①优点
-一致性哈希算法的容错性
-​ 假设Node C宕机，可以看到此时对象A、B、D不会受到影响，只有C对象被重定位到Node D。一般的，在一致性Hash算法中，如果一台服务器不可用，则 受影响的数据仅仅是此服务器到其环空间中前一台服务器（即沿着逆时针方向行走遇到的第一台服务器）之间数据 ，其它不会受到影响。简单说，就是C挂了，受到影响的只是B、C之间的数据，并且这些数据会转移到D进行存储。
-一致性哈希算法的扩展性
-​ 数据量增加了，需要增加一台节点NodeX，X的位置在A和B之间，那收到影响的也就是A到X之间的数据，重新把A到X的数据录入到X上即可， 不会导致hash取余全部数据重新洗牌。
-②缺点
-Hash环的数据倾斜问题
-一致性Hash算法在服务 节点太少时 ，容易因为节点分布不均匀而造成 数据倾斜 （被缓存的对象大部分集中缓存在某一台服务器上）问题，
-3、hash槽分区 1） 为什么出现 哈希槽实质就是一个数组，数组[0,2^14 -1]形成hash slot空间。 16384
-2） 能干什么 解决均匀分配的问题， 在数据和节点之间又加入了一层，把这层称为哈希槽（slot），用于管理数据和节点之间的关系 ，现在就相当于节点上放的是槽，槽里放的是数据。
-槽解决的是粒度问题，相当于把粒度变大了，这样便于数据移动。
-哈希解决的是映射问题，使用key的哈希值来计算所在的槽，便于数据分配。
-3） 多少个hash槽 一个集群只能有16384个槽，编号0-16383（0-2^14-1）。这些槽会分配给集群中的所有主节点，分配策略没有要求。可以指定哪些编号的槽分配给哪个主节点。集群会记录节点和槽的对应关系。解决了节点和槽的关系后，接下来就需要对key求哈希值，然后对16384取余，余数是几key就落入对应的槽里。slot = CRC16(key) % 16384。以槽为单位移动数据，因为槽的数目是固定的，处理起来比较容易，这样数据移动问题就解决了。
-为什么redis最大槽数是16384个？
-4） hash槽计算 Redis 集群中内置了 16384 个哈希槽，redis 会根据节点数量大致均等的将哈希槽映射到不同的节点。当需要在 Redis 集群中放置一个 key-value时，redis 先对 key 使用 crc16 算法算出一个结果，然后把结果对 16384 求余数，这样每个 key 都会对应一个编号在 0-16383 之间的哈希槽，也就是映射到某个节点上。如下代码，key之A 、B在Node2， key之C落在Node3上
-SlotHash.getSlot("A") //6373 SlotHash.getSlot("B") //10374 SlotHash.getSlot("C") //14503 SlotHash.getSlot("HELLO")//866 4、redis集群 docker run -d --name redis-node-1 --net host --privileged=true -v /data/redis/share/redis-node-1:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6381  docker run -d --name redis-node-2 --net host --privileged=true -v /data/redis/share/redis-node-2:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6382  docker run -d --name redis-node-3 --net host --privileged=true -v /data/redis/share/redis-node-3:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6383  docker run -d --name redis-node-4 --net host --privileged=true -v /data/redis/share/redis-node-4:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6384  docker run -d --name redis-node-5 --net host --privileged=true -v /data/redis/share/redis-node-5:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6385  docker run -d --name redis-node-6 --net host --privileged=true -v /data/redis/share/redis-node-6:/data redis:6.0.8 --cluster-enabled yes --appendonly yes --port 6386 --net host 使用宿主机的IP和端口，默认 --privileged=true 获取宿主机root用户权限 -v /data/redis/share/redis-node-6:/data 容器卷，宿主机地址:docker内部地址 redis:6.0.8 redis镜像和版本号 --cluster-enabled yes 开启redis集群 --appendonly yes 开启持久化 --port 6386 redis端口号 redis-cli --cluster create 192.168.111.147:6381 192.168.111.147:6382 192.168.111.147:6383 192.168.111.147:6384 192.168.111.147:6385 192.168.111.147:6386 --cluster-replicas 1 5、数据读写存储 1）查看集群状态 redis-cli -p 6381 cluster info cluster nodes set k1 v1 分配槽时，分配到别的节点就会报错error redis-cli -p 6381 -c 另一种方法
-redis -cli --cluster check 192.168.111.167:6381 2）使用集群命令 6、容错切换迁移 1号主节点宕机，4号从节点成为主节点。
-1号主节点恢复，成为从节点。需要手动切换
-7、主从扩容 1）步骤
-​ 新建两个节点，一主一从
-​ 进入容器内部
-​ 将新增的6387节点作为master节点加入原集群
-​ 检查集群情况第1次
-​ 重新分派槽号
-​ 检查集群情况第2次
-​ 为主节点6387分配从节点6388
-命令：redis-cli --cluster add-node ip:新slave端口 ip:新master端口 --cluster-slave --cluster-master-id 新主机节点ID  redis-cli --cluster add-node 192.168.111.147:6388 192.168.111.147:6387 --cluster-slave --cluster-master-id e4781f644d4a4e4d4b4d107157b9ba8144631451-------这个是6387的编号，按照自己实际情况 ​ 检查集群情况第3次
-2）重新分配槽位
-redis cli -- cluster reshard 192.168.111.117:6381 how many slots do you want to move (from 1 to 16384)? 4096 what is the receiving node ID? 新加节点的id redis -cli --cluster check 192.168.111.167:6381 每个节点平均给新节点分配了一点槽位
-8、主从缩容 目的：6387和6388下线
-检查集群情况1获得6388的节点ID
-redis-cli --cluster check 192.168.111.147:6382 将6388删除，从集群中将4号从节点6388删除
-命令：redis-cli --cluster del-node ip:从机端口 从机6388节点ID redis-cli --cluster del-node 192.168.111.147:6388 5d149074b7e57b802287d1797a874ed7a1a284a8 将6387的槽号清空，重新分配，本例将清出来的槽号都给6381
-how many slots do you want to move (from 1 to 16384)? 4096 what is the receiving node ID? 新加节点的id 6381 source node #1: 要删除的master source node #2: done 检查集群情况第二次
-将6387删除
-redis-cli --cluster del-node 192.168.111.147:6388 5d149074b7e57b802287d1797a874ed7a1a284a8 检查集群情况第三次</content></entry><entry><title>docker（一）基础</title><url>https://zhang4014439175.github.io/post/docker%E4%B8%80/</url><categories><category>运维部署</category></categories><tags><tag>docker</tag><tag>容器化技术</tag></tags><content type="html">  公司后端转为容器化部署。
+[client] default_character_set=utf8 [mysqld] collation_server = utf8_general_ci character_set_server = utf8 4、Redis docker run -p 6379:6379 --name myr3 --privileged=true -v /app/redis/redis.conf:/etc/redis/redis.conf -v /app/redis/data:/data -d redis:6.0.8 redis-server /etc/redis/redis.conf</content></entry><entry><title>docker（一）基础</title><url>https://zhang4014439175.github.io/post/docker%E4%B8%80/</url><categories><category>运维部署</category></categories><tags><tag>docker</tag><tag>容器化技术</tag></tags><content type="html">  公司后端转为容器化部署。
 一、docker为什么出现 希望平滑迁移
 系统平滑移植，容器虚拟化技术
 一次镜像，处处运行
@@ -939,7 +1010,7 @@ long count = strings.stream().filter(string -> string.isEmpty()).count(); public
 Random random = new Random(); random.ints().limit(10).forEach(System.out::println); List&lt;Integer> list = Arrays.asList(7, 6, 9, 3, 8, 2, 1); // 遍历输出符合条件的元素 list.stream().filter(x -> x > 6).forEach(System.out::println); // 匹配第一个 Optional&lt;Integer> findFirst = list.stream().filter(x -> x > 6).findFirst(); // 匹配任意（适用于并行流） Optional&lt;Integer> findAny = list.parallelStream().filter(x -> x > 6).findAny(); // 是否包含符合特定条件的元素 boolean anyMatch = list.stream().anyMatch(x -> x > 6); System.out.println("匹配第一个值：" + findFirst.get()); System.out.println("匹配任意一个值：" + findAny.get()); System.out.println("是否存在大于6的值：" + anyMatch); 6、映射(map,faltMap) map 方法用于映射每个元素到对应的结果，以下代码片段使用 map 输出了元素对应的平方数：
 map：接收一个函数作为参数，该函数会被应用到每个元素上，并将其映射成一个新的元素。 flatMap：接收一个函数作为参数，将流中的每个值都换成另一个流，然后把所有流连接成一个流。 // 获取对应的平方数 List&lt;Integer> numbers = Arrays.asList(3, 2, 2, 3, 7, 3, 5); List&lt;Integer> squaresList = numbers.stream().map( i -> i*i).distinct().collect(Collectors.toList()); //获取10个姓王的人并输出。 List&lt;Person> personList = fromDB(); // 获得List&lt;Person> personList.stream() .filter(item->item.age == 70) // 过滤条件 .limit(10) // limit限制条件 .filter(item->item.name.startWith("王")) // 过滤条件 .map(item->item.name) // 获得姓名 .forEach(System.out::println); //获取一个String 类型的Stream流 //使用map方法，把字符串类型的整数，转换（映射）为Integer类型的整数 //遍历stream2流 Stream&lt;String> stream = Stream.of("1", "2", "3", "4"); Stream&lt;Integer> stream2 = stream.map(s-> Integer.parseInt(s)); stream2.forEach(i-> System.out.println(i)); 7、提取组合(concat,limit ,sk..) //concat Stream.concat(stream1, stream2).forEach(name ->{ Actor actor = new Actor(name); System.out.println(name) }); //limit Random random = new Random(); random.ints().limit(10).forEach(System.out::println); String[] arr1 = { "a", "b", "c", "d" }; String[] arr2 = { "d", "e", "f", "g" }; Stream&lt;String> stream1 = Stream.of(arr1); Stream&lt;String> stream2 = Stream.of(arr2); // concat:合并两个流 distinct：去重 List&lt;String> newList = Stream.concat(stream1, stream2) .distinct() .collect(Collectors.toList()); // limit：限制从流中获得前n个数据 List&lt;Integer> collect = Stream.iterate(1, x -> x + 2) .limit(10) .collect(Collectors.toList()); // skip：跳过前n个数据 List&lt;Integer> collect2 = Stream.iterate(1, x -> x + 2) .skip(1) .limit(5) .collect(Collectors.toList()); System.out.println("流合并：" + newList); System.out.println("limit：" + collect); System.out.println("skip：" + collect2); 8、排序(Sorted) Random random = new Random(); random.ints().limit(10).sorted().forEach(System.out::println); 9、Collectors Collectors 类实现了很多归约操作，例如将流转换成集合和聚合元素。Collectors 可用于返回列表或字符串：
 List&lt;String>strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl"); List&lt;String> filtered = strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList()); System.out.println("筛选列表: " + filtered); //筛选出来的string字符进行拼接 String mergedString = strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.joining(", ")); System.out.println("合并字符串: " + mergedString); 三、统计 List&lt;Integer> numbers = Arrays.asList(3, 2, 2, 3, 7, 3, 5); IntSummaryStatistics stats = numbers.stream().mapToInt((x) -> x).summaryStatistics(); System.out.println("列表中最大的数 : " + stats.getMax()); System.out.println("列表中最小的数 : " + stats.getMin()); System.out.println("所有数之和 : " + stats.getSum()); System.out.println("平均数 : " + stats.getAverage()); 四、流创建 1、随机数流 
-Random rand = new Random(47); show(rand.ints().boxed()); show(rand.longs().boxed()); show(rand.doubles().boxed()); // 控制上限和下限： show(rand.ints(10, 20).boxed()); show(rand.longs(50, 100).boxed()); show(rand.doubles(20, 30).boxed()); // 控制流大小： show(rand.ints(2).boxed()); show(rand.longs(2).boxed()); show(rand.doubles(2).boxed()); // 控制流的大小和界限 show(rand.ints(3, 3, 9).boxed()); show(rand.longs(3, 12, 22).boxed()); show(rand.doubles(3, 11.5, 12.3).boxed()); 具体看on java 8 第14章，流创建、随机数流 2、int类型的范围 public class Ranges { public static void main(String[] args) { // 传统方法: int result = 0; for (int i = 10; i &lt; 20; i++) result += i; System.out.println(result); // for-in 循环: result = 0; for (int i : range(10, 20).toArray()) result += i; System.out.println(result); // 使用流: System.out.println(range(10, 20).sum()); } }</content></entry><entry><title>String字符串</title><url>https://zhang4014439175.github.io/post/string/</url><categories><category>Java-Base</category></categories><tags><tag>Java</tag><tag>String</tag></tags><content type="html"> string是C++、java、VB等编程语言中的字符串，字符串是一个特殊的对象，属于引用类型。 在java、C#中，String类对象创建后，字符串一旦初始化就不能更改，因为string类中所有字符串都是常量，数据是无法更改，由于string对象的不可变，所以可以共享。一、Collectors.joining() 1、拼接字符串 List&lt;String> list = Arrays.asList("Ram","Shyam","Shiv","Mahesh"); String result= list.stream().collect(Collectors.joining()); System.out.println(result); //RamShyamShivMahesh result= list.stream().collect(Collectors.joining(",")); System.out.println(result); //Ram,Shyam,Shiv,Mahesh result= list.stream().collect(Collectors.joining("-","[","]")); System.out.println(result); //[Ram-Shyam-Shiv-Mahesh] 2、拼接对象 package com.concretepage; import java.util.List; import java.util.stream.Collectors; public class JoiningExampleWithListOfObject { public static void main(String[] args) { List&lt;Person> list = new ArrayList&lt;>(); list.add(new Person("Ram", 23)); list.add(new Person("Shyam", 20)); list.add(new Person("Shiv", 25)); list.add(new Person("Mahesh", 30)); String result= list.stream() .map(p -> p.getName()) .collect(Collectors.joining()); System.out.println(result); //RamShyamShivMahesh String result= list.stream() .map(p -> p.getName()) .collect(Collectors.joining("|")); System.out.println(result); //Ram|Shyam|Shiv|Mahesh String result= list.stream().map(p -> p.getName()).collect(Collectors.joining("-","[","]")); System.out.println(result); //[Ram-Shyam-Shiv-Mahesh] String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining()); System.out.println(result); //23202530 String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining("|")); System.out.println(result); //23|20|25|30 String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining("-","[","]")); System.out.println(result); //[23-20-25-30] String result= list.stream() .map(p -> p.getName()+"-" + p.getAge()) .collect(Collectors.joining("|")); System.out.println(result); //Ram-23|Shyam-20|Shiv-25|Mahesh-30 String result= list.stream() .map(p -> p.getName()+"-" + p.getAge()) .collect(Collectors.joining("|","[","]")); System.out.println(result); //[Ram-23|Shyam-20|Shiv-25|Mahesh-30] } } 3、遍历ArrayList中的元素
+Random rand = new Random(47); show(rand.ints().boxed()); show(rand.longs().boxed()); show(rand.doubles().boxed()); // 控制上限和下限： show(rand.ints(10, 20).boxed()); show(rand.longs(50, 100).boxed()); show(rand.doubles(20, 30).boxed()); // 控制流大小： show(rand.ints(2).boxed()); show(rand.longs(2).boxed()); show(rand.doubles(2).boxed()); // 控制流的大小和界限 show(rand.ints(3, 3, 9).boxed()); show(rand.longs(3, 12, 22).boxed()); show(rand.doubles(3, 11.5, 12.3).boxed()); 具体看on java 8 第14章，流创建、随机数流 2、int类型的范围 public class Ranges { public static void main(String[] args) { // 传统方法: int result = 0; for (int i = 10; i &lt; 20; i++) result += i; System.out.println(result); // for-in 循环: result = 0; for (int i : range(10, 20).toArray()) result += i; System.out.println(result); // 使用流: System.out.println(range(10, 20).sum()); } }</content></entry><entry><title>String字符串</title><url>https://zhang4014439175.github.io/post/string/</url><categories><category>Java-Base</category></categories><tags><tag>Java</tag><tag>String</tag></tags><content type="html">  string是C++、java、VB等编程语言中的字符串，字符串是一个特殊的对象，属于引用类型。 在java、C#中，String类对象创建后，字符串一旦初始化就不能更改，因为string类中所有字符串都是常量，数据是无法更改，由于string对象的不可变，所以可以共享。一、Collectors.joining() 1、拼接字符串 List&lt;String> list = Arrays.asList("Ram","Shyam","Shiv","Mahesh"); String result= list.stream().collect(Collectors.joining()); System.out.println(result); //RamShyamShivMahesh result= list.stream().collect(Collectors.joining(",")); System.out.println(result); //Ram,Shyam,Shiv,Mahesh result= list.stream().collect(Collectors.joining("-","[","]")); System.out.println(result); //[Ram-Shyam-Shiv-Mahesh] 2、拼接对象 package com.concretepage; import java.util.List; import java.util.stream.Collectors; public class JoiningExampleWithListOfObject { public static void main(String[] args) { List&lt;Person> list = new ArrayList&lt;>(); list.add(new Person("Ram", 23)); list.add(new Person("Shyam", 20)); list.add(new Person("Shiv", 25)); list.add(new Person("Mahesh", 30)); String result= list.stream() .map(p -> p.getName()) .collect(Collectors.joining()); System.out.println(result); //RamShyamShivMahesh String result= list.stream() .map(p -> p.getName()) .collect(Collectors.joining("|")); System.out.println(result); //Ram|Shyam|Shiv|Mahesh String result= list.stream().map(p -> p.getName()).collect(Collectors.joining("-","[","]")); System.out.println(result); //[Ram-Shyam-Shiv-Mahesh] String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining()); System.out.println(result); //23202530 String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining("|")); System.out.println(result); //23|20|25|30 String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining("-","[","]")); System.out.println(result); //[23-20-25-30] String result= list.stream() .map(p -> p.getName()+"-" + p.getAge()) .collect(Collectors.joining("|")); System.out.println(result); //Ram-23|Shyam-20|Shiv-25|Mahesh-30 String result= list.stream() .map(p -> p.getName()+"-" + p.getAge()) .collect(Collectors.joining("|","[","]")); System.out.println(result); //[Ram-23|Shyam-20|Shiv-25|Mahesh-30] } } 3、遍历ArrayList中的元素
 List&lt;Coffee> coffees = Stream.generate(new CoffeeSupplier()) .limit(10) .collect(Collectors.toList()); System.out.println(coffees); toString() 打印出类的内存地址
 @Override public String toString() { //return " InfiniteRecursion address: " + this + "\n" //如果你真的想要打印对象的内存地址，应该调用 Object.toString() 方法，这才是负责此任务的方法。所以，不要使用 this，而是应该调用 super.toString() 方法。 } public static void main(String[] args) { Stream.generate(InfiniteRecursion::new) .limit(10) .forEach(System.out::println); } 二、常见方法 length()
 charAt() 获取String中索引位置上的char
@@ -1290,7 +1361,99 @@ drainTo(): 一次性从 BlockingQueue 获取所有可用的数据对象(还可�
 **Join：**把分拆任务的结果进行合并
 Executor &lt;- ExecutorService &lt;- AbstractExecutorService &lt;- ForkJoinPool
 Future &lt;- ForkJoinTask &lt;- RecursiveTask
-class MyTask extends RecursiveTask&lt;Integer> { //拆分差值不能超过10 private static final Integer VALUE = 10; private int begin; private int end; private int result; public MyTask(int begin, int end) { this.begin = begin; this.end = end; } @Override protected Integer compute() { //判断相加两个数值是否大于10 if ((end - begin) &lt;= VALUE) { for (int i = begin; i &lt;= end; i++) { result = result + i; } }else { int middle = (begin + end) / 2; //拆分左边 MyTask task1 = new MyTask(begin, middle); //拆分右边 MyTask task2 = new MyTask(middle + 1, end); //调用方法拆分 task1.fork(); task2.fork(); //合并结果 result = task1.join() + task2.join(); } return result; } } public class ForkJoinDemo { public static void main(String[] args) throws ExecutionException, InterruptedException { //创建MyTask MyTask myTask = new MyTask(0, 100); //创建分支合并池对象 ForkJoinPool forkJoinPool = new ForkJoinPool(); ForkJoinTask&lt;Integer> forkJoinTask = forkJoinPool.submit(myTask); //获取最终合并之后结果 Integer result = forkJoinTask.get(); System.out.println(result); //关闭池对象 forkJoinPool.shutdown(); } }</content></entry><entry><title>Java框架-Spring</title><url>https://zhang4014439175.github.io/post/spring%E4%B8%80/</url><categories><category>Java-Framework</category><category>Spring</category></categories><tags><tag>Java</tag><tag>框架</tag><tag>Spring</tag></tags><content type="html"> 一、IOC控制反转 1、概念 控制反转，把对象创建和对象之间的调用过程，交给 Spring 进行管理
+class MyTask extends RecursiveTask&lt;Integer> { //拆分差值不能超过10 private static final Integer VALUE = 10; private int begin; private int end; private int result; public MyTask(int begin, int end) { this.begin = begin; this.end = end; } @Override protected Integer compute() { //判断相加两个数值是否大于10 if ((end - begin) &lt;= VALUE) { for (int i = begin; i &lt;= end; i++) { result = result + i; } }else { int middle = (begin + end) / 2; //拆分左边 MyTask task1 = new MyTask(begin, middle); //拆分右边 MyTask task2 = new MyTask(middle + 1, end); //调用方法拆分 task1.fork(); task2.fork(); //合并结果 result = task1.join() + task2.join(); } return result; } } public class ForkJoinDemo { public static void main(String[] args) throws ExecutionException, InterruptedException { //创建MyTask MyTask myTask = new MyTask(0, 100); //创建分支合并池对象 ForkJoinPool forkJoinPool = new ForkJoinPool(); ForkJoinTask&lt;Integer> forkJoinTask = forkJoinPool.submit(myTask); //获取最终合并之后结果 Integer result = forkJoinTask.get(); System.out.println(result); //关闭池对象 forkJoinPool.shutdown(); } }</content></entry><entry><title>Java框架-Spring设计思想</title><url>https://zhang4014439175.github.io/post/springmvc%E4%B8%80/</url><categories><category>Java-Framework</category><category>Spring</category></categories><tags><tag>Java</tag><tag>框架</tag><tag>Spring</tag></tags><content type="html"> 一、简介 1、介绍 封装了servlet
+MVC是一种软件架构的思想，将软件按照模型、视图、控制器来划分
+M:Model，模型层，指工程中的JavaBean，作用是处理数据
+JavaBean分为两类:
+一类称为实体类Bean:专门存储业务数据的，如 Student、User 等 一类称为业务处理 Bean:指 Service 或 Dao 对象，专门用于处理业务逻辑和数据访问。
+2、特点 Spring 家族原生产品，与 IOC 容器等基础设施无缝对接
+基于原生的Servlet**，通过了功能强大的**前端控制器DispatcherServlet，对请求和响应进行统一处理
+表述层各细分领域需要解决的问题全方位覆盖**，提供**全面解决方案
+代码清新简洁**，大幅度提升开发效率 **
+内部组件化程度高，可插拔式组件即插即用**，想要什么功能配置相应组件即可 **
+性能卓著，尤其适合现代大型、超大型互联网项目要求
+3、入门案例 IDE：idea 2019.2
+构建工具：maven3.5.4
+服务器：tomcat8.5
+Spring版本：5.3.1
+3.1、引入依赖 &lt;dependencies> &lt;!-- SpringMVC --> &lt;dependency> &lt;groupId>org.springframework&lt;/groupId> &lt;artifactId>spring-webmvc&lt;/artifactId> &lt;version>5.3.1&lt;/version> &lt;/dependency> &lt;!-- 日志 --> &lt;dependency> &lt;groupId>ch.qos.logback&lt;/groupId> &lt;artifactId>logback-classic&lt;/artifactId> &lt;version>1.2.3&lt;/version> &lt;/dependency> &lt;!-- ServletAPI --> &lt;dependency> &lt;groupId>javax.servlet&lt;/groupId> &lt;artifactId>javax.servlet-api&lt;/artifactId> &lt;version>3.1.0&lt;/version> &lt;scope>provided&lt;/scope> &lt;/dependency> &lt;!-- Spring5和Thymeleaf整合包 --> &lt;dependency> &lt;groupId>org.thymeleaf&lt;/groupId> &lt;artifactId>thymeleaf-spring5&lt;/artifactId> &lt;version>3.0.12.RELEASE&lt;/version> &lt;/dependency> &lt;/dependencies> 3.2、配置web.xml 注册SpringMVC的前端控制器DispatcherServlet，视图控制器来接收所有请求，转换为controller请求，然后进行跳转
+1）默认配置方式
+自己配置到src/main/webapp/WEB-INF/web.xml
+此配置作用下，SpringMVC的配置文件默认位于WEB-INF下，默认名称为- servlet.xml，例如，以下配置所对应SpringMVC的配置文件位于WEB-INF下，文件名为springMVC- servlet.xml
+&lt;!-- 配置SpringMVC的前端控制器，对浏览器发送的请求统一进行处理 --> &lt;servlet> &lt;servlet-name>springMVC&lt;/servlet-name> &lt;servlet-class>org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class> &lt;/servlet> &lt;servlet-mapping> springMVC-servlet.xml &lt;servlet-name>springMVC&lt;/servlet-name> &lt;!--设置springMVC的核心控制器所能处理的请求的请求路径 /所匹配的请求可以是/login或.html或.js或.css方式的请求路径 但是/不能匹配.jsp请求路径的请求--> &lt;url-pattern>/&lt;/url-pattern> &lt;/servlet-mapping> 2）扩展配置方式
+可通过init-param标签设置SpringMVC配置文件的位置和名称，通过load-on-startup标签设置 SpringMVC前端控制器DispatcherServlet的初始化时间
+&lt;!-- 配置SpringMVC的前端控制器，对浏览器发送的请求统一进行处理 --> &lt;servlet> &lt;servlet-name>springMVC&lt;/servlet-name> &lt;servlet-class>org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class> &lt;!-- 通过初始化参数指定SpringMVC配置文件的位置和名称 --> &lt;init-param> &lt;!-- contextConfigLocation为固定值 --> &lt;param-name>contextConfigLocation&lt;/param-name> &lt;!-- 使用classpath:表示从类路径查找配置文件，例如maven工程中的 src/main/resources --> &lt;param-value>classpath:springMVC.xml&lt;/param-value> &lt;/init-param> &lt;!-- 作为框架的核心组件，在启动过程中有大量的初始化操作要做 而这些操作放在第一次请求时才执行会严重影响访问速度 因此需要通过此标签将启动控制DispatcherServlet的初始化时间提前到服务器启动时 --> &lt;load-on-startup>1&lt;/load-on-startup> &lt;/servlet> &lt;servlet-mapping> &lt;servlet-name>springMVC&lt;/servlet-name> &lt;!-- 设置springMVC的核心控制器所能处理的请求的请求路径 /所匹配的请求可以是/login或.html或.js或.css方式的请求路径 但是/不能匹配.jsp请求路径的请求 /* 可以匹配。jsp的请求 --> &lt;url-pattern>/&lt;/url-pattern> &lt;/servlet-mapping> 3.3、springmvc配置文件 名称要以web.xml中servlet-name中的名称加上-servlet.xml
+springMVC-servlet.xml
+&lt;beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd"> &lt;!-- 自动扫描包 --> &lt;context:component-scan base-package="com.atguigu.mvc.controller"/> &lt;!-- 配置Thymeleaf视图解析器 --> &lt;bean id="viewResolver" class="org.thymeleaf.spring5.view.ThymeleafViewResolver"> &lt;!-- 顺序 --> &lt;property name="order" value="1"/> &lt;property name="characterEncoding" value="UTF-8"/> &lt;!-- 模板引擎 --> &lt;property name="templateEngine"> &lt;!-- 内部bean --> &lt;bean class="org.thymeleaf.spring5.SpringTemplateEngine"> &lt;property name="templateResolver"> &lt;bean class="org.thymeleaf.spring5.templateresolver .SpringResourceTemplateResolver"> &lt;!-- 视图前缀 --> &lt;property name="prefix" value="/WEB-INF/templates/"/> &lt;!-- 视图后缀 --> &lt;property name="suffix" value=".html"/> &lt;property name="templateMode" value="HTML5"/> &lt;property name="characterEncoding" value="UTF-8" /> &lt;/bean> &lt;/property> &lt;/bean> &lt;/property> &lt;/bean> &lt;!-- 配置默认的servlet处理静态资源 --> &lt;mvc:default-servlet-handler/> &lt;!-- 开启maven的注解驱动 --> &lt;mvc:annotation-driven/> &lt;!-- 配置视图控制器 --> &lt;mvc:view-controller path="/" view-name="index">&lt;/mvc:view-controller> &lt;!-- 配置上传解析器 --> &lt;!-- 配置拦截器 --> 下面拦截器章节 &lt;/beans> 3.4、请求 1）controller
+@RequestMapping("/") public Sting protal() { /**将视图逻辑返回 * prefix：视图前缀，去前缀的路径找 * suffix：后缀，去后缀找 * templateMode：HTML5 * characterEncoding：UTF-8 * 逻辑视图：index * 物理视图：/WEB-INF/templates/index.xml **/ return "index"; } 2）html请求
+&lt;!-- 自动加上上下文路径 localhost:8080/springMVC/hello --> &lt;a th:href="@{/hello}">HelloWorld&lt;/a>&lt;br/> &lt;!-- 不加上下文路径 localhost:8080/hello --> &lt;a href="/hello">HelloWorld&lt;/a> 二、RequestMapping注解 1、功能 从注解名称上我们可以看到，@RequestMapping注解的作用就是将请求和处理请求的控制器方法关联 起来，建立映射关系。
+SpringMVC 接收到指定的请求，就会来找到在映射关系中对应的控制器方法来处理这个请求。
+2、位置 @RequestMapping标识一个类:设置映射请求的请求路径的初始信息
+@RequestMapping标识一个方法:设置映射请求请求路径的具体信息
+@Controller @RequestMapping("/test") public class RequestMappingController { //此时请求映射所映射的请求的请求路径为:/test/testRequestMapping @RequestMapping("/testRequestMapping") public String testRequestMapping(){ return "success"; } } 3、value属性 1）注解的value属性通过请求的请求地址匹配请求映射
+2）注解的value属性是一个字符串类型的数组，表示该请求映射能够匹配多个请求地址 所对应的请求
+@RequestMapping( value = {"/testRequestMapping", "/test"} ) 3）注解的value属性必须设置，至少通过请求地址匹配请求映射
+4、method属性 1）method属性通过请求的请求方式(get或post)匹配请求映射
+2）method属性是一个RequestMethod类型的数组，表示该请求映射能够匹配 多种请求方式的请求
+若当前请求的请求地址满足请求映射的value属性，但是请求方式不满足method属性，则浏览器报错 405:Request method &lsquo;POST&rsquo; not supported
+@RequestMapping( value = {"/testRequestMapping", "/test"}, method = {RequestMethod.GET, RequestMethod.POST} ) public String testRequestMapping(){ return "success"; } 3）派生注解
+@GetMapping@PostMapping@PutMapping@DeleteMapping
+但是目前浏览器只支持get和post，若在form表单提交时，为method设置了其他请求方式的字符 串(put或delete)，则按照默认的请求方式get处理
+若要发送put和delete请求，则需要通过spring提供的过滤器HiddenHttpMethodFilter，在 RESTful部分会讲到
+5、params属性 params属性通过请求的请求参数匹配请求映射
+params属性是一个字符串类型的数组，可以通过四种表达式设置请求参数 和请求映射的匹配关系
+"param":要求请求映射所匹配的请求必须携带param请求参数 "!param":要求请求映射所匹配的请求必须不能携带param请求参数 "param=value":要求请求映射所匹配的请求必须携带param请求参数且param=value "param!=value":要求请求映射所匹配的请求必须携带param请求参数但是param!=value 若当前请求满足@RequestMapping注解的value和method属性，但是不满足params属性，此时 页面回报错400:Parameter conditions "username, password!=123456" not met for actual request parameters: username={admin}, password={123456} 案例：
+@RequestMapping( value = {"/testRequestMapping", "/test"} ,method = {RequestMethod.GET, RequestMethod.POST} ,params = {"username","password!=123456"} ) public String testRequestMapping(){ return "success"; } 6、headers属性 headers属性通过请求的请求头信息匹配请求映射
+headers属性是一个字符串类型的数组，可以通过四种表达式设置请求头信 息和请求映射的匹配关系
+"header":要求请求映射所匹配的请求必须携带header请求头信息 "!header":要求请求映射所匹配的请求必须不能携带header请求头信息 "header=value":要求请求映射所匹配的请求必须携带header请求头信息且header=value "header!=value":要求请求映射所匹配的请求必须携带header请求头信息且header!=value 若当前请求满足@RequestMapping注解的value和method属性，但是不满足headers属性，此时页面 显示404错误，即资源未找到 7、支持ant风格的路径 ?:表示任意的单个字符 *:表示任意的0个或多个字符 **:表示任意层数的任意目录 注意:在使用**时，只能使用/**/xxx的方式 8、支持路径中的占位符 原始方式:/deleteUser?id=1
+rest方式:/user/delete/1
+SpringMVC路径中的占位符常用于RESTful风格中，当请求路径中将某些数据通过路径的方式传输到服 务器中，就可以在相应的@RequestMapping注解的value属性中通过占位符{xxx}表示传输的数据，在 通过@PathVariable注解，将占位符所表示的数据赋值给控制器方法的形参
+&lt;a th:href="@{/testRest/1/admin}">测试路径中的占位符-->/testRest&lt;/a>&lt;br> @RequestMapping("/testRest/{id}/{username}") public String testRest(@PathVariable("id") String id, @PathVariable("username") String username){ System.out.println("id:"+id+",username:"+username); return "success"; } //最终输出的内容为-->id:1,username:admin 9、获取请求参数 1）通过ServletAPI获取 将HttpServletRequest作为控制器方法的形参，此时HttpServletRequest类型的参数表示封装了当前请 求的请求报文的对象
+@RequestMapping("/testParam") public String testParam(HttpServletRequest request){ String username = request.getParameter("username"); String password = request.getParameter("password"); System.out.println("username:"+username+",password:"+password); return "success"; } 2）通过形参获取请求参数 在控制器方法的形参位置，设置和请求参数同名的形参，当浏览器发送请求，匹配到请求映射时，在DispatcherServlet中就会将请求参数赋值给相应的形参
+&lt;a th:href="@{/testParam(username='admin',password=123456)}">测试获取请求参数-- >/testParam&lt;/a>&lt;br> @RequestMapping("/testParam") public String testParam(String username, String password){ System.out.println("username:"+username+",password:"+password); return "success"; } 注:
+若请求所传输的请求参数中有多个同名的请求参数，此时可以在控制器方法的形参中设置字符串 数组或者字符串类型的形参接收此请求参数 若使用字符串数组类型的形参，此参数的数组中包含了每一个数据 若使用字符串类型的形参，此参数的值为每个数据中间使用逗号拼接的结果 3）@CookieValue @CookieValue是将cookie数据和控制器方法的形参创建映射关系
+@CookieValue注解一共有三个属性:value、required、defaultValue，用法同@RequestParam
+三、域对象共享数据 1、使用ServletAPI向request @RequestMapping("/testServletAPI") public String testServletAPI(HttpServletRequest request){ request.setAttribute("testScope", "hello,servletAPI"); return "success"; } 2、使用ModelAndView向request域对象共享数据 @RequestMapping("/testModelAndView") public ModelAndView testModelAndView(){ /** * ModelAndView有Model和View的功能 * Model主要用于向请求域共享数据 * View主要用于设置视图，实现页面跳转 */ ModelAndView mav = new ModelAndView(); //向请求域共享数据 mav.addObject("testScope", "hello,ModelAndView"); //设置视图，实现页面跳转 mav.setViewName("success"); return mav; } 3、使用Model向request域对象共享数据 @RequestMapping("/testModel") public String testModel(Model model){ model.addAttribute("testScope", "hello,Model"); return "success"; } 4、使用map向request域对象共享数据 @RequestMapping("/testMap") public String testMap(Map&lt;String, Object> map){ map.put("testScope", "hello,Map"); return "success"; } 5、使用ModelMap向request域对象共享数据 @RequestMapping("/testModelMap") public String testModelMap(ModelMap modelMap){ modelMap.addAttribute("testScope", "hello,ModelMap"); return "success"; } 6、Model、ModelMap、Map的关系 Model、ModelMap、Map类型的参数其实本质上都是 BindingAwareModelMap 类型的
+public interface Model{} public class ModelMap extends LinkedHashMap&lt;String, Object> {} public class ExtendedModelMap extends ModelMap implements Model {} public class BindingAwareModelMap extends ExtendedModelMap {} 7、向session域共享数据 @RequestMapping("/testSession") public String testSession(HttpSession session){ session.setAttribute("testSessionScope", "hello,session"); return "success"; } 8、向application域共享数据 @RequestMapping("/testApplication") public String testApplication(HttpSession session){ ServletContext application = session.getServletContext(); application.setAttribute("testApplicationScope", "hello,application"); return "success"; } 所有的域对象共享数据最后都封装到了ModelAndView当中
+四、SpringMVC视图 SpringMVC中的视图是View接口，视图的作用渲染数据，将模型Model中的数据展示给用户
+SpringMVC视图的种类很多，默认有转发视图和重定向视图
+当工程引入jstl的依赖，转发视图会自动转换为JstlView
+若使用的视图技术为Thymeleaf，在SpringMVC的配置文件中配置了Thymeleaf的视图解析器，由此视 图解析器解析之后所得到的是ThymeleafView
+1、ThymeleafView 当控制器方法中所设置的视图名称没有任何前缀时，此时的视图名称会被SpringMVC配置文件中所配置的视图解析器解析，视图名称拼接视图前缀和视图后缀所得到的最终路径，会通过转发的方式实现跳转
+@RequestParam("/") public String getOne() { //返回首页，由springmvc中的ThymeleafViewResolver视图解析器来进行解析 return "index"; } 2、转发视图 SpringMVC中默认的转发视图是InternalResourceView
+SpringMVC中创建转发视图的情况:
+当控制器方法中所设置的视图名称以"forward:&ldquo;为前缀时，创建InternalResourceView视图，此时的视 图名称不会被SpringMVC配置文件中所配置的视图解析器解析，而是会将前缀"forward:&ldquo;去掉，剩余部分作为最终路径通过转发的方式实现跳转
+例如"forward:/"，&ldquo;forward:/employee&rdquo;
+@RequestMapping("/testForward") public String testForward(){ return "forward:/testHello"; } 3、重定向视图 SpringMVC中默认的重定向视图是RedirectView
+当控制器方法中所设置的视图名称以"redirect:&ldquo;为前缀时，创建RedirectView视图，此时的视图名称不 会被SpringMVC配置文件中所配置的视图解析器解析，而是会将前缀"redirect:&ldquo;去掉，剩余部分作为最 终路径通过重定向的方式实现跳转
+例如"redirect:/"，&ldquo;redirect:/employee&rdquo;
+注：重定向视图在解析时，会先将redirect:前缀去掉，然后会判断剩余部分是否以/开头，若是则会自 动拼接上下文路径
+@RequestMapping("/testRedirect") public String testRedirect(){ return "redirect:/testHello"; } 4、视图控制器view-controller 当控制器方法中，仅仅用来实现页面跳转，即只需要设置视图名称时，可以将处理器方法使用view-controller标签进行表示，在springmvc配置文件中
+&lt;!-- path:设置处理的请求地址 view-name:设置请求地址所对应的视图名称 --> &lt;mvc:view-controller path="/testView" view-name="success">&lt;/mvc:view-controller> 注: 当SpringMVC中设置任何一个view-controller时，其他控制器中的请求映射将全部失效，此时需
+要在SpringMVC的核心配置文件中设置开启mvc注解驱动的标签:
+5、注解扫描驱动 &lt;mvc:annotation-driven />
+四、Restful 1、简介 REST:Representational State Transfer，表现层资源状态转移。
+1资源
+资源是一种看待服务器的方式，即，将服务器看作是由很多离散的资源组成。每个资源是服务器上一个 可命名的抽象概念。因为资源是一个抽象的概念，所以它不仅仅能代表服务器文件系统中的一个文件、 数据库中的一张表等等具体的东西，可以将资源设计的要多抽象有多抽象，只要想象力允许而且客户端 应用开发者能够理解。与面向对象设计类似，资源是以名词为核心来组织的，首先关注的是名词。一个 资源可以由一个或多个URI来标识。URI既是资源的名称，也是资源在Web上的地址。对某个资源感兴 趣的客户端应用，可以通过资源的URI与其进行交互。
+2资源的表述
+资源的表述是一段对于资源在某个特定时刻的状态的描述。可以在客户端-服务器端之间转移(交 换)。资源的表述可以有多种格式，例如HTML/XML/JSON/纯文本/图片/视频/音频等等。资源的表述格 式可以通过协商机制来确定。请求-响应方向的表述通常使用不同的格式。
+3状态转移
+状态转移说的是:在客户端和服务器端之间转移(transfer)代表资源状态的表述。通过转移和操作资 源的表述，来间接实现操作资源的目的。
+2、RESTful的实现 具体说，就是 HTTP 协议里面，四个表示操作方式的动词:GET、POST、PUT、DELETE。
+它们分别对应四种基本操作:
+GET 用来获取资源，
+POST 用来新建资源，
+PUT 用来更新资源，
+DELETE 用来删除资源。
+REST 风格提倡 URL 地址使用统一的风格设计，从前到后各个单词使用斜杠分开，不使用问号键值对方 式携带请求参数，而是将要发送给服务器的数据作为 URL 地址的一部分，以保证整体风格的一致性。
+3、HiddenHttpMethodFilter 由于浏览器只支持发送get和post方式的请求，那么该如何发送put和delete请求呢?
+SpringMVC 提供了 HiddenHttpMethodFilter 帮助我们将 POST 请求转换为 DELETE 或 PUT 请求
+HiddenHttpMethodFilter 处理put和delete请求的条件:
+a>当前请求的请求方式必须为post
+b>当前请求必须传输请求参数_method
+满足以上条件，HiddenHttpMethodFilter 过滤器就会将当前请求的请求方式转换为请求参数 _method的值，因此请求参数_method的值才是最终的请求方式
+在web.xml中注册HiddenHttpMethodFilter
+&lt;form th:action="@{/hello}" method="post"> &lt;input type="submit" value="测试method属性"> &lt;/form> &lt;filter> &lt;filter-name>HiddenHttpMethodFilter&lt;/filter-name> &lt;filter-class>org.springframework.web.filter.HiddenHttpMethodFilter&lt;/filter-class> &lt;/filter> &lt;filter-mapping> &lt;filter-name>HiddenHttpMethodFilter&lt;/filter-name> &lt;url-pattern>/*&lt;/url-pattern> &lt;/filter-mapping> 五、处理Ajax 六、文件上传和下载 七、拦截器 &lt;bean id="firstInterceptor" class="com.lizi.interceptor.FirstInterceptor"/> &lt;mvc:interceptors> &lt;!--1.直接填bean--> &lt;bean class="com.lizi.interceptor.FirstInterceptor"/> &lt;!--2.引用外面bean--> &lt;ref bean="firstInterceptor"/> &lt;!--3.规则添加bean--> &lt;mvc:interceptor> &lt;mvc:mapping path="/**"/> &lt;mvc:exclude-mapping path="/abc"/> &lt;ref bean="firstInterceptor"/> &lt;/mvc:interceptor> &lt;/mvc:interceptors> 八、异常处理器 九、注解配置SpringMVC 十、执行流程 十一、扩展使用 docker exec -it chemex ip addr</content></entry><entry><title>Java框架-Spring</title><url>https://zhang4014439175.github.io/post/spring%E4%B8%80/</url><categories><category>Java-Framework</category><category>Spring</category></categories><tags><tag>Java</tag><tag>框架</tag><tag>Spring</tag></tags><content type="html"> 一、IOC控制反转 1、概念 控制反转，把对象创建和对象之间的调用过程，交给 Spring 进行管理
 使用 IOC 目的:为了耦合度降低
 做入门案例就是 IOC 实现
 2、底层原理 xml解析、工厂模式、反射
@@ -2190,281 +2353,16 @@ jar包名称 作用 mybatis-ehcache Mybatis和EHCache的整合包 ehcache EHCach
 &lt;plugins> &lt;!--设置分页插件--> &lt;plugin interceptor="com.github.pagehelper.PageInterceptor">&lt;/plugin> &lt;/plugins> 3、分页插件的使用 1）在查询功能之前开启分页功能
 PageHelper.startPage(int pageNum, int pageSize) 2）在查询获取list集合之后，使用PageInfo获取分页相关数据
 //list:分页之后的数据 //navigatePages:导航分页的页码数 PageInfo&lt;T> pageInfo = new PageInfo&lt;>(List&lt;T> list, int navigatePages) 3）分页相关数据
-PageInfo{ pageNum=8, pageSize=4, size=2, startRow=29, endRow=30, total=30, pages=8, list=Page{ count=true, pageNum=8, pageSize=4, startRow=28, endRow=32, total=30, pages=8, reasonable=false, pageSizeZero=false }, prePage=7, nextPage=0, isFirstPage=false, isLastPage=true, hasPreviousPage=true, hasNextPage=false, navigatePages=5, navigateFirstPage=4, navigateLastPage=8, navigatepageNums=[4, 5, 6, 7, 8] } 常用数据: pageNum:当前页的页码 pageSize:每页显示的条数 size:当前页显示的真实条数 total:总记录数 pages:总页数 prePage:上一页的页码 nextPage:下一页的页码</content></entry><entry><title>关于我的</title><url>https://zhang4014439175.github.io/about.html</url><categories/><tags/><content type="html"> 职业：：后端攻城师 —— 一个90后程序员，终身学习者。 评价：：对技术充满热情，充满学习的动力。—— 只要投入时间去学，没有学不会的东西。 技能：：主职业是后端（Java、Python）、运维、大数据的技术栈也有所涉及。 业余：：业余时间学习过设计的知识，如果逮住合适的机会，也会培养全方位的技能。 娱乐：：爱阅读，但读不进文学名著；军事政治爱好者，跑步锻炼忠实粉丝；喜欢 MMORPG 游戏，但现阶段还是要以赚钱为主，等退休了再玩个痛快。 心态：：爱生活、爱阅读、爱学习、爱拼搏、爱大自然。 原则：：常怀感恩的心。 社交：：一个人走得快，一群人走得远。 理财：人生就像滚雪球，重要的是，找到那条又湿又长的雪道。
-一、心路历程： 小学时候喜欢玩电脑，刚开始没有电脑的时候喜欢往别人家跑，老妈为了把我拴住于是买了第一台电脑。家里一台电脑经受了我的好多锤炼，主机、宽带处理问题都是自己搞。 高中时候自学很多软件，但是没有专研下去。上大学前学习艺术，于是填志愿去了视觉传达设计（保底也能去打印店作业）。但是对计算机有浓厚的兴趣，因此利用课余时间自学 Java 技术栈。 大三实习期间走出校门，转型到了 IT 行业。在老家山西干了一年Java，开始主做前端。前端能及时给出视觉反馈的特点，成了我热衷这个岗位的最大原因。 有着去大厂的梦想，不过条条大路通罗马，大厂是一条路但不是唯一的路，因而充实好自己最重要，有机会就努力抓住机会，没有机会就自己创造机会。 我是一个普通的程序员，一个平凡的 90 后，但我不想让自己的人生平庸，奥力给！</content></entry><entry><title/><url>https://zhang4014439175.github.io/post/%E5%AD%97%E7%AC%A6%E4%B8%B2string/</url><categories/><tags/><content type="html"> 一、Collectors.joining() 1、拼接字符串 List&lt;String> list = Arrays.asList("Ram","Shyam","Shiv","Mahesh"); String result= list.stream().collect(Collectors.joining()); System.out.println(result); //RamShyamShivMahesh result= list.stream().collect(Collectors.joining(",")); System.out.println(result); //Ram,Shyam,Shiv,Mahesh result= list.stream().collect(Collectors.joining("-","[","]")); System.out.println(result); //[Ram-Shyam-Shiv-Mahesh] 2、拼接对象 package com.concretepage; import java.util.List; import java.util.stream.Collectors; public class JoiningExampleWithListOfObject { public static void main(String[] args) { List&lt;Person> list = new ArrayList&lt;>(); list.add(new Person("Ram", 23)); list.add(new Person("Shyam", 20)); list.add(new Person("Shiv", 25)); list.add(new Person("Mahesh", 30)); String result= list.stream() .map(p -> p.getName()) .collect(Collectors.joining()); System.out.println(result); //RamShyamShivMahesh String result= list.stream() .map(p -> p.getName()) .collect(Collectors.joining("|")); System.out.println(result); //Ram|Shyam|Shiv|Mahesh String result= list.stream().map(p -> p.getName()).collect(Collectors.joining("-","[","]")); System.out.println(result); //[Ram-Shyam-Shiv-Mahesh] String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining()); System.out.println(result); //23202530 String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining("|")); System.out.println(result); //23|20|25|30 String result= list.stream() .map(p -> String.valueOf(p.getAge())) .collect(Collectors.joining("-","[","]")); System.out.println(result); //[23-20-25-30] String result= list.stream() .map(p -> p.getName()+"-" + p.getAge()) .collect(Collectors.joining("|")); System.out.println(result); //Ram-23|Shyam-20|Shiv-25|Mahesh-30 String result= list.stream() .map(p -> p.getName()+"-" + p.getAge()) .collect(Collectors.joining("|","[","]")); System.out.println(result); //[Ram-23|Shyam-20|Shiv-25|Mahesh-30] } } 3、遍历ArrayList中的元素
-List&lt;Coffee> coffees = Stream.generate(new CoffeeSupplier()) .limit(10) .collect(Collectors.toList()); System.out.println(coffees); toString() 打印出类的内存地址
-@Override public String toString() { //return " InfiniteRecursion address: " + this + "\n" //如果你真的想要打印对象的内存地址，应该调用 Object.toString() 方法，这才是负责此任务的方法。所以，不要使用 this，而是应该调用 super.toString() 方法。 } public static void main(String[] args) { Stream.generate(InfiniteRecursion::new) .limit(10) .forEach(System.out::println); } 二、常见方法 length()
-charAt() 获取String中索引位置上的char
-getChars()、getBytes() 复制char或byte到一个目标数组中
-toCharArray() 生成一个char[]，包含String中的所有字符
-equals()、equalsIgnoreCase() 比较两个String的内容是否相同。如果相同，结果为true
-compareTo()、compareToIgnoreCase()
-​ 按词典顺序比较String的内容，比较结果为负数、零或正数。注意，大小写不等价
-contains()
-contentEquals() 如果该String对象与参数的内容完全一致，则返回true
-isEmpty() 返回boolean结果，以表明String对象的长度是否为0
-​ Stringutils.isEmpty() 来判断是否为空null
-regionMatches() 返回boolean结果，以表明所比较区域是否相等
-startsWith() 返回boolean结果，以表明该String是否以传入参数开始
-endsWith() 返回boolean结果，以表明此参数是否是该字符串的后缀
-indexOf() 返回在String中的起始索引，如果不包含此参数，就返回-1；
-lastIndexOf() lastIndexOf()是从后往前搜索
-matches() 返回boolean结果，以表明该String和给出的正则表达式是否匹配
-split() 按照正则表达式拆分String，返回一个结果数组
-join() 用分隔符拼接字符片段，产生一个新的String
-substring() 返回一个新的String对象，以包含参数指定的子串
-concat() 拼接字符串
-replace() 返回替换字符后的新String对象。如果没有替换发生，则返回原始的String对象
-replaceFirst() 返回替换首个目标字符串后的String对象
-replaceAll() 返回替换所有目标字符串后的String对象
-toLowerCase()
-toUpperCase()
-trim() 将String两端的空白符删除后，返回一个新的String对象。
-​ 如果没有任何改变，则返回原始的String对象
-valueOf()
-intern() 为每个唯一的字符序列生成一个且仅生成一个String引用。
-format() 返回格式化结果String
-1、练习 从0 - 100 共25个数字
-String result = new Random(47) .ints(25, 0, 100) .mapToObj(Integer::toString) .collect(Collectors.joining(",")); 三、printf() System.out.printf("Row 1: [%d %f]%n", x, y); 这一行代码在运行的时候，首先将 x 的值插入到 %d_ 的位置，然后将 y 的值插入到 %f 的位置。这些占位符叫做格式修饰符，它们不仅指明了插入数据的位置，同时还指明了将会插入什么类型的变量，以及如何格式化。在这个例子中 %d 表示 x 是一个整数，%f 表示 y 是一个浮点数（float 或者 double）。
-int x = 5; double y = 5.332542; // The old way: System.out.println("Row 1: [" + x + " " + y + "]"); // The new way: System.out.format("Row 1: [%d %f]%n", x, y); // or System.out.printf("Row 1: [%d %f]%n", x, y); /* Output: Row 1: [5 5.332542] Row 1: [5 5.332542] Row 1: [5 5.332542] */ 格式化修饰符 f.format("%-15s %5s %10s%n", "Item", "Qty", "Price"); f.format("%-15s %5s %10s%n", "----", "---", "-----"); f.format("%-15.15s %5d %10.2f%n", name, qty, price); receiptBuilder.add("Jack's Magic Beans", 4, 4.25); receiptBuilder.add("Princess Peas", 3, 5.1); receiptBuilder.add("Three Bears Porridge", 1, 14.29); total += price * qty; f.format("%-15s %5s %10.2f%n", "Tax", "", total * 0.06); f.format("%-15s %5s %10s%n", "", "", "-----"); f.format("%-15s %5s %10.2f%n", "Total", "", total * 1.06); Formatter转换 下面的表格展示了最常用的类型转换：
-类型 含义 d 整型（十进制） c Unicode字符 b Boolean值 s String f 浮点数（十进制） e 浮点数（科学计数） x 整型（十六进制） h 散列码（十六进制） % 字面值“%” 四、正则表达式 System.out.println("-1234".matches("-?\\d+")); System.out.println("5678".matches("-?\\d+")); System.out.println("+911".matches("-?\\d+")); System.out.println("+911".matches("(-|\\+)?\\d+")); /* Output: true true false true */ (-|\+)?
-这个正则表达式表示字符串的起始字符可能是一个 - 或 +，或者二者都没有（因为后面跟着 ? 修饰符）。因为字符 + 在正则表达式中有特殊的意义，所以必须使用 \ 将其转义，使之成为表达式中的一个普通字符。
-String类还自带了一个非常有用的正则表达式工具——split() 方法，其功能是“将字符串从正则表达式匹配的地方切开。”
-public class Splitting { public static String knights = "Then, when you have found the shrubbery, " + "you must cut down the mightiest tree in the " + "forest...with... a herring!"; public static void split(String regex) { System.out.println( Arrays.toString(knights.split(regex))); } public static void main(String[] args) { split(" "); // Doesn't have to contain regex chars split("\\W+"); // Non-word characters split("n\\W+"); // 'n' followed by non-words //按空格来划分字符串。 //一个非单词字符（如果 W 小写，\\w，则表示一个单词字符）。 //表示“字母n后面跟着一个或多个非单词字符。” } } /* Output: [Then,, when, you, have, found, the, shrubbery,, you, must, cut, down, the, mightiest, tree, in, the, forest...with..., a, herring!] [Then, when, you, have, found, the, shrubbery, you, must, cut, down, the, mightiest, tree, in, the, forest, with, a, herring] [The, whe, you have found the shrubbery, you must cut dow, the mightiest tree i, the forest...with... a herring!] */ 用正则表达式进行替换操作时，你可以只替换第一处匹配，也可以替换所有的匹配：
-// strings/Replacing.java public class Replacing { static String s = Splitting.knights; public static void main(String[] args) { System.out.println(s.replaceFirst("f\\w+", "located")); //以字母 f 开头，后面跟一个或多个字母（注意这里的 w 是小写的）。并且只替换掉第一个匹配的部分，所以 “found” 被替换成 “located”。 System.out.println(s.replaceAll("shrubbery|tree|herring","banana")); //第二个表达式要匹配的是三个单词中的任意一个，因为它们以竖线分割表示“或”，并且替换所有匹配的部分。 } } /* Output: Then, when you have located the shrubbery, you must cut down the mightiest tree in the forest...with... a herring! Then, when you have found the banana, you must cut down the mightiest banana in the forest...with... a banana! */ 表达式 含义 B 指定字符B \xhh 十六进制值为0xhh的字符 \uhhhh 十六进制表现为0xhhhh的Unicode字符 \t 制表符Tab \n 换行符 \r 回车 \f 换页 \e 转义（Escape） 当你学会了使用字符类（character classes）之后，正则表达式的威力才能真正显现出来。以下是一些创建字符类的典型方式，以及一些预定义的类：
-表达式 含义 . 任意字符 [abc] 包含a、b或c的任何字符（和`a [^abc] 除a、b和c之外的任何字符（否定） [a-zA-Z] 从a到z或从A到Z的任何字符（范围） [abc[hij]] a、b、c、h、i、j中的任意字符（与`a [a-z&amp;&amp;[hij]] 任意h、i或j（交） \s 空白符（空格、tab、换行、换页、回车） \S 非空白符（[^\s]） \d 数字（[0-9]） \D 非数字（[^0-9]） \w 词字符（[a-zA-Z_0-9]） \W 非词字符（[^\w]） for(String pattern : new String[]{ "Rudolph", "[rR]udolph", "[rR][aeiou][a-z]ol.*", "R.*" }) System.out.println("Rudolph".matches(pattern)); /* Output: true true true true */ 1、量词 贪婪型： 量词总是贪婪的，除非有其他的选项被设置。贪婪表达式会为所有可能的模式发现尽可能多的匹配。导致此问题的一个典型理由就是假定我们的模式仅能匹配第一个可能的字符组，如果它是贪婪的，那么它就会继续往下匹配。
-勉强型： 用问号来指定，这个量词匹配满足模式所需的最少字符数。因此也被称作懒惰的、最少匹配的、非贪婪的或不贪婪的。
-占有型： 目前，这种类型的量词只有在 Java 语言中才可用（在其他语言中不可用），并且也更高级，因此我们大概不会立刻用到它。当正则表达式被应用于 String 时，它会产生相当多的状态，以便在匹配失败时可以回溯。而“占有的”量词并不保存这些中间状态，因此它们可以防止回溯。它们常常用于防止正则表达式失控，因此可以使正则表达式执行起来更高效。
-贪婪型 勉强型 占有型 如何匹配 X? X?? X?+ 一个或零个X X* X*? X*+ 零个或多个X X+ X+? X++ 一个或多个X X{n} X{n}? X{n}+ 恰好n次X X{n,} X{n,}? X{n,}+ 至少n次X X{n,m} X{n,m}? X{n,m}+ X至少n次，但不超过m次 A(B(C))D
-中有三个组：组 0 是 ABCD，组 1 是 BC，组 2 是 C。
-Matcher 对象提供了一系列方法，用以获取与组相关的信息：
-public int groupCount() 返回该匹配器的模式中的分组数目，组 0 不包括在内。 public String group() 返回前一次匹配操作（例如 find()）的第 0 组（整个匹配）。 public String group(int i) 返回前一次匹配操作期间指定的组号，如果匹配成功，但是指定的组没有匹配输入字符串的任何部分，则将返回 null。 public int start(int group) 返回在前一次匹配操作中寻找到的组的起始索引。 public int end(int group) 返回在前一次匹配操作中寻找到的组的最后一个字符索引加一的值。 2、元字符 元字符：即为有特定含义的字符，常见的元字符如下
-代码 说明 . 匹配除换行符以外的任意字符 \w 匹配字母或数字或下划线或汉字 \s 匹配任意的空白符 \d 匹配数字 \b 匹配单词的开始或结束 ^ 匹配字符串的开始（在集合字符里[^a]表示非（不匹配）的意思 $ 匹配字符串的结束 详解和示例：
-（1）. 匹配任何任意字符 例如 . 可以匹配 1，n，*，+，- ,等
-（2）\d\w\s 匹配第一个字符为数字，第二个字符为字母或数字、或下划线或汉字，第三字符为空格的字符串 例如：11 ，2a , 1_
-（3）^\d\d\d$ 匹配三个全部都为数字的字符串 例如： 123,456,789
-还可以用于验证输入的字符串是否符合qq（身份证号）的验证 ： 例如：^\d{8}$ 匹配8位数字的qq号，^\d{15}&amp;匹配15位均为数字的身份证号 （4）\bOlive\b 匹配单词Olive 例如： I Love Oliver and Olive .这个时候返回的是Olive 而不是Oliver,因为\b&hellip;.\b返回的匹配的单词
-3、反义字符 反义字符：多用于查找除某个字符以外其他任意字符均可以的情况
-常用的反义字符如下：
-代码/语法 说明 \W 匹配任意不是字母，数字，下划线，汉字的字符 \S 匹配任意不是空白符的字符 \D 匹配任意非数字的字符 \B 匹配不是单词开头或结束的位置 [^x] 匹配除了x以外的任意字符 [^aeiou] 匹配除了aeiou这几个字母以外的任意字符 详解和示例：
-（1）\W 匹配除字母、数字、下划线、汉字以为的字符形如 +，-，*
-（2）\S 匹配除空格以外的任意字符形如：1，* ，）
-（3）[^abcde]匹配除abcde以为的其他字符 如 e，f，g，h
-4、限定字符 限定字符多用于重复匹配次数
-常用的限定字符如下
-代码/语法 说明 * 重复零次或更多次 + 重复一次或更多次 ? 重复零次或一次 {n} 重复n次 {n,} 重复n次或更多次 {n,m} 重复n到m次 详解和示例：
-（1）\d* 匹配重复0次或多次数字 例如:可能为空 或 任意数字 （2,3。。。。）
-（2）\d+ 匹配重复1次或多次数字 例如:可能为1个或多个数字 1,23,234,2345，&hellip;&hellip;..
-（3）\d? 匹配重复次个或者一次数字 例如：可能为空或者任意的一个数字（1,2，。。。）
-（4）\d{8}匹配重复8次数字 例如：123456768
-（5）\d{4,}匹配重复至少4次数字 例如：1234,12345,124244,。。。。。
-（6）^\d{8,11}$ 匹配重复8-11次数字 例如：12345678,123456789,1234567890,12345678901
-5、转义字符 在实际的开发中，可能会遇到要比配元字符的情况，这个时候就需要进行字符转义，如元字符 . * \ 需要转换为. * \
-例如： 需要匹配qq邮箱 \d{8,}+qq+.+com 在这里的. 就需要加斜杠
-6、字符分枝 字符分枝多用于满足不同情况的选择，用“|”将不同的条件分割开来，比如有些固定电话区号有三位，有些有四位，这个时候可以采用字符分枝
-例如：\d{3}-\d{8}|\d{4}-\d{8} 可以匹配两种不同长度区号的固定电话
-下边的IP地址正则表达式也有用到字符分枝
-7、字符分组 字符分组多用于将多个字符重复，主要通过使用小括号()来进行分组
-形如：（\d\w){3} 重复匹配3次（\d\w)
-常用于表示IP地址 形如： ((25[0-5]|2[0-4][0-9]|[0-1]\d\d).){3}(25[0-5]|2[0-4][0-9]|[0-1]\d\d)
-解析：先把IP地址分为两部分一部分是123.123.123. 另一部分是123，又因Ip最大值为255，所以先使用分组，然后在组里边再进行选择，组里也有三部分，0-199,200-249,250-255，分别和上述的表达是对应，最后还要注意分组之后还要加上一个.，因为是元字符所以要转义故加上. 然后再把这部分整体看做是一个组，重复三次，再加上仅有数字的一组也就是不带.的那一组即可完成IP地址的校验
-常用分组语法
-分类 代码/语法 说明 (exp) 匹配exp,并捕获文本到自动命名的组里 捕 (?exp) 匹配exp,并捕获文本到名称为name的组里，也可以写成(?&rsquo;name&rsquo;exp) 获 (?:exp) 匹配exp,不捕获匹配的文本，也不给此分组分配组号 零 (?=exp) 匹配exp前面的位置 宽 (?&lt;=exp) 匹配exp后面的位置 断 (?!exp) 匹配后面跟的不是exp的位置 言 (?&lt;!exp) 匹配前面不是exp的位置 注释 (?#comment) 这种类型的分组不对正则表达式的处理产生任何影响，用于提供注释让人阅读 8、懒惰匹配和贪婪匹配 贪婪匹配：正则表达式中包含重复的限定符时，通常的行为是匹配尽可能多的字符。
-懒惰匹配，有时候需要匹配尽可能少的字符。
-例如： a.*b，它将会匹配最长的以a开始，以b结束的字符串。如果用它来搜索aabab的话，它会匹配整个字符串aabab。但是我们此时可能需要匹配的是ab这样的话就需要用到懒惰匹配了。懒惰匹配会匹配尽可能少的字符
-常用的懒惰匹配限定符如下
-代码/语法 说明 *? 重复任意次，但尽可能少重复 +? 重复1次或更多次，但尽可能少重复 ?? 重复0次或1次，但尽可能少重复 {n,m}? 重复n到m次，但尽可能少重复 {n,}? 重复n次以上，但尽可能少重复 9、后向引用 后向引用用于重复搜索前面某个分组匹配的文本。
-使用小括号指定一个子表达式后，匹配这个子表达式的文本(也就是此分组捕获的内容)可以在表达式或其它程序中作进一步的处理。默认情况下，每个分组会自动拥有一个组号，规则是：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推
-示例：\b(\w+)\b\s+\1\b可以用来匹配重复的单词，像go go, 或者kitty kitty。
-这个表达式首先是一个单词，也就是单词开始处和结束处之间的多于一个的字母或数字(\b(\w+)\b)，这个单词会被捕获到编号为1的分组中，然后是1个或几个空白符(\s+)，最后是分组1中捕获的内容（也就是前面匹配的那个单词）(\1)。
-你也可以自己指定子表达式的组名。要指定一个子表达式的组名，请使用这样的语法：(?\w+)(或者把尖括号换成&rsquo;也行：(?&lsquo;Word&rsquo;\w+)),这样就把\w+的组名指定为Word了。要反向引用这个分组捕获的内容，你可以使用\k,所以上一个例子也可以写成这样：\b(?\w+)\b\s+\k\b
-10、零宽断言 有时候需要查找某些匹配之前或之后的东西，这个时候就需要用到们像\b,^,$那样用于指定一个位置，这个位置应该满足一定的条件(即断言)，因此它们也被称为零宽断言
-(?=exp)也叫零宽度正预测先行断言，它断言自身出现的位置的后面能匹配表达式exp。比如 \b\w+(?=ing\b)，匹配以ing结尾的单词的前面部分(除了ing以外的部分)，如查找I&rsquo;m singing while you&rsquo;re dancing.时，它会匹配sing和danc。
-(?&lt;=exp)也叫零宽度正回顾后发断言，它断言自身出现的位置的前面能匹配表达式exp。比如(?&lt;=\bre)\w+\b会匹配以re开头的单词的后半部分(除了re以外的部分)，例如在查找reading a book时，它匹配ading。
-11、其他语法 12、常用的实用正则表达式整理 只能输入数字："^[0-9]*$"。
-　只能输入n位的数字："^&ldquo;d{n}$"。
-　只能输入至少n位的数字："^&ldquo;d{n,}$"。
-　只能输入m~n位的数字：。"^&ldquo;d{m,n}$&rdquo;
-　只能输入零和非零开头的数字："^(0|[1-9][0-9]*)$"。
-　只能输入有两位小数的正实数："^[0-9]+(.[0-9]{2})?$"。
-　只能输入有1~3位小数的正实数："^[0-9]+(.[0-9]{1,3})?$"。
-　只能输入非零的正整数："^"+?[1-9][0-9]*$"。
-　只能输入非零的负整数："^&rdquo;-[1-9][]0-9&rdquo;*$。
-　只能输入长度为3的字符："^.{3}$"。
-　只能输入由26个英文字母组成的字符串："^[A-Za-z]+$"。
-　只能输入由26个大写英文字母组成的字符串："^[A-Z]+$"。
-　只能输入由26个小写英文字母组成的字符串："^[a-z]+$"。
-　只能输入由数字和26个英文字母组成的字符串："^[A-Za-z0-9]+$"。
-　只能输入由数字、26个英文字母或者下划线组成的字符串："^&ldquo;w+$"。
-　验证用户密码："^[a-zA-Z]&ldquo;w{5,17}$&ldquo;正确格式为：以字母开头，长度在6~18之间，只能包含字符、数字和下划线。
-　验证是否含有^%&amp;’,;=?$&ldquo;&ldquo;等字符：&rdquo;[^%&amp;’,;=?$&ldquo;x22]+"。
-　只能输入汉字："^[&ldquo;u4e00-&ldquo;u9fa5]{0,}$&rdquo;
-　验证Email地址："^&ldquo;w+([-+.]&ldquo;w+)@&ldquo;w+([-.]&ldquo;w+)&rdquo;.&ldquo;w+([-.]&ldquo;w+)*$"。
-　验证InternetURL："^http://([&ldquo;w-]+&rdquo;.)+[&ldquo;w-]+(/[&ldquo;w-./?%&amp;=]*)?$"。
-　验证电话号码："^(&rdquo;(&ldquo;d{3,4}-)|&ldquo;d{3.4}-)?&ldquo;d{7,8}$&ldquo;正确格式为：&ldquo;XXX-XXXXXXX&rdquo;、&ldquo;XXXX- XXXXXXXX&rdquo;、&ldquo;XXX-XXXXXXX&rdquo;、&ldquo;XXX-XXXXXXXX&rdquo;、&ldquo;XXXXXXX"和"XXXXXXXX&rdquo;。
-　验证身份证号(15位或18位数字)："^&ldquo;d{15}|&ldquo;d{18}$"。
-　验证一年的12个月："^(0?[1-9]|1[0-2])$&ldquo;正确格式为：&ldquo;01"～"09"和"1"～"12&rdquo;。
-　验证一个月的31天："^((0?[1-9])|((1|2)[0-9])|30|31)$&ldquo;正确格式为;&ldquo;01"～"09"和"1"～"31&rdquo;。</content></entry><entry><title>Java框架-Spring源码（一）</title><url>https://zhang4014439175.github.io/post/spring%E6%BA%90%E7%A0%81%E4%B8%80/</url><categories><category>Java-Framework</category><category>Spring</category></categories><tags><tag>Java</tag><tag>框架</tag><tag>Spring</tag></tags><content type="html"> https://www.bilibili.com/video/BV16q4y1n7Fd/?p=3&spm_id_from=pageDriver&vd_source=81d9ec453e0a2eb8337b93642bef5ce0
-一、流程 1、流程 加载xml&mdash;-解析xml&mdash;-封装BeanDefinition&mdash;-实例化&mdash;-放到容器中&mdash;-从容器中获取
-容器 &mdash;- Map &mdash;- 三级缓存
-map k String v object
-​ k class v object
-​ String objectFactory
-​ String BeanDefinition
-BeanFactoryPostProcessor &mdash;- 实例化 &mdash;- 填充属性 &mdash;- 设置Aware接口的属性 &mdash;- BeanPostProcessor : before &mdash;&mdash; 填充属性 &mdash;&mdash; 初始化bean执行init-method方法 &mdash;- BeanPostProcessor : after &mdash;- 完整对象
-填充属性后面属于对象初始化
-2、对象流程 new classpathxmlApplicationContext(“applicationcontext.xml”) | 创建BeanFactory | applicationcontext.xml | xml、yaml、json定义读取配置文件的规范 | bean定义信息BeanDefinition | 反射（BeanFactory） | 实例化bean | 填充属性（prepareBeanFactory(beanFactory)） | BeanPostProcessor : before | 初始化bean执行init-method方法 | BeanPostProcessor : after | 完整bean对象 2.1、实例化bean 1）BeanFactory 反射进行创建
-三种获取方式 Constructor ctor = Class.getDeclareConstructor(); Object obj = ctor,newInstance(); 2.2、实例化和初始化 实例化：堆中开辟一块空间属性都是默认值
-初始化：1）填充属性、赋值
-​ 2）调用具体的初始化方法
-二、PostProcessor后置处理器增强器 1、BeanFactoryPostProcessor 上一步，beanDefinition &mdash;- BeanFactory中间的过程，增强beanDefinition信息
-例子：
-&lt;bean id=datasource class=com.alibaba.druid.pool.DruidDatasource> &lt;property name=username value=${jdbc.username}/> &lt;/bean> 自定义实现类，实现BeanFactoryPostProcessor方法，以对beandefinition进行增强
-自定义 BeanFactoryPostProcessor 实现 BeanFactoryPostProcessor，重写方法，以至于可以更好的对对象进行操作
-1.1、PlaceholderConfigurerSupport 对配置文件中的${}进行替换
-2、BeanPostProcessor AbstractAutowireCapableBeanFactory里面
-2.1、增强bean信息 2.2、AOP AbstractAutoProxyCreator 实现 BeanPostProcessor，createProxy
-在after 和 before 方法里执行AOP
-1）动态代理
-cglib
-jdk
-三、Aware 在不同的阶段要处理不同的工作，应该怎么办？
-观察者模式： 监听器，监听事件，多播器。
-四、SpringBean 分为普通对象和容器对象
-普通对象： 我们自定义需要的对象
-容器对象：内置对象，spring需要的对象
-五、FactoryBean FactoryBean：只需要调用getObject就可以返回具体的对象，整个对象的创建过程由用户自己来控制，用来创建一些更加复杂的、个性化的bean。一种Bean创建的一种方式，对Bean的一种扩展。对于复杂的Bean对象初始化创建使用其可封装对象的创建细节。它是一个可以返回bean的实例的工厂bean，实现这个接口可以对bean进行一些额外的操作，例如根据不同的配置类型返回不同类型的bean，简化xml配置等。
-​ getObject：
-​ isSingleton
-​ getObjectType
-BeanFactory：它是IoC容器的顶级接口，是IoC容器的底层基础实现，也是访问Spring容器的根接口，负责对bean的创建，访问等工作。需要完整的创建过程、这个过程是spring来控制的 。
-它在使用上也有些特殊，BeanFactory接口中有一个字符常量String FACTORY_BEAN_PREFIX = &ldquo;&amp;&rdquo;; 当我们去获取BeanFactory类型的bean时，如果beanName不加&amp;则获取到对应bean的实例;如果beanName加上&amp;，则获取到BeanFactory本身的实例。
-区别：BeanFactory是个Factory，也就是IOC容器或对象工厂，而FactoryBean就是个Bean。在Spring中，所有的Bean都是由BeanFactory(也就是IOC容器)来进行管理的。但对FactoryBean而言，这个Bean不是简单的Bean，而是一个能生产或者修饰对象生成的工厂Bean,它的实现与设计模式中的工厂模式和修饰器模式类似。
-ListableBeanFactory
-ConfigurationBeanFactory
-CustomizeBeanFactory
-​ allowBeanDefinitionOverriding
-​ allowCircularReferences
-loadBeanDefinitions ( beanFactory )
-六、BeanDefinition beanDefinitionMap
-RootBeanDefinition
-GerericBeanDefinition
-BeanDefinition合并
-七、BeanDefinitionReader 八、调用方法 1、refresh方法 位置：AbstractApplicationContext 517行
-prepareRefresh方法：
-ObtainFreshBeanFactory
-AbstractApplicationContext refresh开始
-invokeBeanFactoryPostProcessors方法：
-Tomcat入口，ServletWebServerApplicationContext的150行，onRefresh方法
-九、常见问题 1、详细了解每一个步骤 如果需要在bean对象创建过程中，详细了解每一个步骤完成的进度应该怎么做？在不同的阶段要做不同的处理工作，应该怎么办？
-观察者模式：监听器、监听事件</content></entry><entry><title>Java框架-Spring源码（二）</title><url>https://zhang4014439175.github.io/post/spring%E6%BA%90%E7%A0%81%E4%BA%8C/</url><categories><category>Java-Framework</category><category>Spring</category></categories><tags><tag>Java</tag><tag>框架</tag><tag>Spring</tag></tags><content type="html"> 一、refresh 1、prepareRefresh /** * 前戏，做容器刷新前的准备工作 * 1、设置容器的启动时间 * 2、设置活跃状态为true * 3、设置关闭状态为false * 4、获取Enviroment对象，并加载当前系统的属性值到Enviroment对象中（可扩展） * 5、准备监听器和事件的集合对象，默认为空的集合。 */ 1.1、initPropertySources 重写initPropertySources()方法，添加系统属性
-public class MyClassPathXmlApplicationContext extends ClassPathXmlApplicationContext { public MyClassPathXmlApplicationContext(String... configLocations){ super(configLocations); } @Override protected void initPropertySources() { System.out.println("扩展initPropertySource"); //这里添加了一个name属性到Environment里面，以方便我们在后面用到 getEnvironment().getSystemProperties().put("name","bobo"); //这里要求Environment中必须包含username属性，如果不包含，则抛出异常 getEnvironment().setRequiredProperties("username"); } } public class Test { public static void main(String[] args) { MyClassPathXmlApplicationContext ac = new MyClassPathXmlApplicationContext("applicationContext.xml"); String name = (String) context.getEnvironment().getSystemProperties().get("name"); System.out.println(name); // ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-${username}.xml"); } } 1.2、validateRequiredProperties() @Override protected void initPropertySources() { System.out.println("扩展initPropertySource"); //这里添加了一个name属性到Environment里面，以方便我们在后面用到 getEnvironment().getSystemProperties().put("name","bobo"); //这里要求Environment中必须包含username属性，如果不包含，则抛出异常 getEnvironment().setRequiredProperties("username"); } //获取 2、obtainFreshBeanFactory(); ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory(); 2.1、refreshBeanFactory 2.1.1、customizeBeanFactory 1）介绍
-**allowBeanDefinitionOverriding:**设置是否允许具有相同名称的Bean来覆盖之前的Bean
-　在同一个配置文件中定义两个相同的Bean,编译器就会直接报错,但是我们可以在不同的配置文件中定义两个相同的Bean,这种情况下编译器是允许的,例如 ioc01.xml中定义了一个 id=person的Bean,ioc02中也定义了一个相同的id=person的Bean,Spring通过 allowBeanDefinitionOverriding这个属性来控制,是否允许定义两个相同的Bean,默认值是true,(也就是允许定义两个相同的Bean),只不过后加载的配置文件中的Bean会覆盖掉前面加载的配置文件中的Bean.如果allowBeanDefinitionOverriding的值为false,那么就不允许出现两个相同名称的Bean加载到Spring容器中.这样就会报错
-**allowCircularReferences:**设置是否允许循环引用
-　A依赖B,同时B又依赖A
-　A依赖B,B依赖C,C依赖A
-　这种情况就称为循环引用,Spring默认情况下使允许循环引用的.
-2）源码分析
-allowBeanDefinitionOverriding、allowCircularReferences这两个属性值的设置是在AbstractRefreshableApplicationContext这个类中的,具体的源码如下
-　我们可以看到这里有两个判断条件 this.allowBeanDefinitionOverriding、this.allowCircularReferences,这两个判断条件的值是什么呢?
-　我们在这个类中往上翻,会发现,在该类中这两个属性值都是包装类类型Boolean,而且没有给定初始值,但是包装类类型的默认初始值就是 null啊.
-　所以呢,这两个判断条件都不成立,那么自然而然的DefaultListableBeanFactory类型的beanFactory就不能设置值,那么既然不能设置值,它们的初始值又是什么呢?
-　翻开DefaultListableBeanFactory这个类,我们可以看到这两个属性的默认值都是true,这样的话,我们就可以知道Spring中这两个属性都是默认为true的了.
-3）扩展
-方式一：
-ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("bean1.xml"); context.setAllowBeanDefinitionOverriding(false); context.setAllowCircularReferences(false); 方式二：
-public class MyClassPathXmlApplicationContext extends ClassPathXmlApplicationContext { @Override protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) { //是否允许覆盖同名称的不同定义的对象 //spring默认为true super.setAllowBeanDefinitionOverriding(false); super.setAllowCircularReferences(false); super.customizeBeanFactory(beanFactory); } } ClassPathXmlApplicationContext context = new MyClassPathXmlApplicationContext("bean1.xml"); 问题：到底allowBeanDefinitionOverriding应该设置true还是false？
-spring中默认是true，也就是默认支持名称相同的bean的覆盖。 而springboot中的默认值是false，也就是不支持名称相同的bean被覆盖。 那么我们自己应该如何选择呢？ 这里笔者认为默认不覆盖比较好。因为还是推荐一个系统中不要存在名称相同的bean，否则后者覆盖前者，多人分工合作的时候，难以避免某些bean被覆盖，会出现很多诡异的问题 ，甚至会带来线上真实的业务损失。 bean的名称不相同，依据具体的业务给bean起名字。这样不但可以解决bean名称重复的问题，还可以大大提高程序的可读性与可维护性。 只有当集成了第三方的库，不同库直接由于是多个团队开发的，甚至这些团队属于不同的国家，有可能会出现bean名称相同的情况。这种情况就需要根据实际需求来设置allowBeanDefinitionOverriding的值了。 那我问他又来了，如果能拿到spring上下文对象了，如何此时再设置这个属性，那么这个属性肯定是没有生效的，如何让这个属性生效呢？？？ applicationContext.refresh(); 就是这么简单，调用上下文对象的refresh()方法就 可以了 2.1.2、customizeBeanFactory</content></entry><entry><title>Java框架-Spring设计思想</title><url>https://zhang4014439175.github.io/post/springmvc%E4%B8%80/</url><categories><category>Java-Framework</category><category>Spring</category></categories><tags><tag>Java</tag><tag>框架</tag><tag>Spring</tag></tags><content type="html"> 一、简介 1、介绍 封装了servlet
-MVC是一种软件架构的思想，将软件按照模型、视图、控制器来划分
-M:Model，模型层，指工程中的JavaBean，作用是处理数据
-JavaBean分为两类:
-一类称为实体类Bean:专门存储业务数据的，如 Student、User 等 一类称为业务处理 Bean:指 Service 或 Dao 对象，专门用于处理业务逻辑和数据访问。
-2、特点 Spring 家族原生产品，与 IOC 容器等基础设施无缝对接
-基于原生的Servlet**，通过了功能强大的**前端控制器DispatcherServlet，对请求和响应进行统一处理
-表述层各细分领域需要解决的问题全方位覆盖**，提供**全面解决方案
-代码清新简洁**，大幅度提升开发效率 **
-内部组件化程度高，可插拔式组件即插即用**，想要什么功能配置相应组件即可 **
-性能卓著，尤其适合现代大型、超大型互联网项目要求
-3、入门案例 IDE：idea 2019.2
-构建工具：maven3.5.4
-服务器：tomcat8.5
-Spring版本：5.3.1
-3.1、引入依赖 &lt;dependencies> &lt;!-- SpringMVC --> &lt;dependency> &lt;groupId>org.springframework&lt;/groupId> &lt;artifactId>spring-webmvc&lt;/artifactId> &lt;version>5.3.1&lt;/version> &lt;/dependency> &lt;!-- 日志 --> &lt;dependency> &lt;groupId>ch.qos.logback&lt;/groupId> &lt;artifactId>logback-classic&lt;/artifactId> &lt;version>1.2.3&lt;/version> &lt;/dependency> &lt;!-- ServletAPI --> &lt;dependency> &lt;groupId>javax.servlet&lt;/groupId> &lt;artifactId>javax.servlet-api&lt;/artifactId> &lt;version>3.1.0&lt;/version> &lt;scope>provided&lt;/scope> &lt;/dependency> &lt;!-- Spring5和Thymeleaf整合包 --> &lt;dependency> &lt;groupId>org.thymeleaf&lt;/groupId> &lt;artifactId>thymeleaf-spring5&lt;/artifactId> &lt;version>3.0.12.RELEASE&lt;/version> &lt;/dependency> &lt;/dependencies> 3.2、配置web.xml 注册SpringMVC的前端控制器DispatcherServlet，视图控制器来接收所有请求，转换为controller请求，然后进行跳转
-1）默认配置方式
-自己配置到src/main/webapp/WEB-INF/web.xml
-此配置作用下，SpringMVC的配置文件默认位于WEB-INF下，默认名称为- servlet.xml，例如，以下配置所对应SpringMVC的配置文件位于WEB-INF下，文件名为springMVC- servlet.xml
-&lt;!-- 配置SpringMVC的前端控制器，对浏览器发送的请求统一进行处理 --> &lt;servlet> &lt;servlet-name>springMVC&lt;/servlet-name> &lt;servlet-class>org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class> &lt;/servlet> &lt;servlet-mapping> springMVC-servlet.xml &lt;servlet-name>springMVC&lt;/servlet-name> &lt;!--设置springMVC的核心控制器所能处理的请求的请求路径 /所匹配的请求可以是/login或.html或.js或.css方式的请求路径 但是/不能匹配.jsp请求路径的请求--> &lt;url-pattern>/&lt;/url-pattern> &lt;/servlet-mapping> 2）扩展配置方式
-可通过init-param标签设置SpringMVC配置文件的位置和名称，通过load-on-startup标签设置 SpringMVC前端控制器DispatcherServlet的初始化时间
-&lt;!-- 配置SpringMVC的前端控制器，对浏览器发送的请求统一进行处理 --> &lt;servlet> &lt;servlet-name>springMVC&lt;/servlet-name> &lt;servlet-class>org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class> &lt;!-- 通过初始化参数指定SpringMVC配置文件的位置和名称 --> &lt;init-param> &lt;!-- contextConfigLocation为固定值 --> &lt;param-name>contextConfigLocation&lt;/param-name> &lt;!-- 使用classpath:表示从类路径查找配置文件，例如maven工程中的 src/main/resources --> &lt;param-value>classpath:springMVC.xml&lt;/param-value> &lt;/init-param> &lt;!-- 作为框架的核心组件，在启动过程中有大量的初始化操作要做 而这些操作放在第一次请求时才执行会严重影响访问速度 因此需要通过此标签将启动控制DispatcherServlet的初始化时间提前到服务器启动时 --> &lt;load-on-startup>1&lt;/load-on-startup> &lt;/servlet> &lt;servlet-mapping> &lt;servlet-name>springMVC&lt;/servlet-name> &lt;!-- 设置springMVC的核心控制器所能处理的请求的请求路径 /所匹配的请求可以是/login或.html或.js或.css方式的请求路径 但是/不能匹配.jsp请求路径的请求 /* 可以匹配。jsp的请求 --> &lt;url-pattern>/&lt;/url-pattern> &lt;/servlet-mapping> 3.3、springmvc配置文件 名称要以web.xml中servlet-name中的名称加上-servlet.xml
-springMVC-servlet.xml
-&lt;beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd"> &lt;!-- 自动扫描包 --> &lt;context:component-scan base-package="com.atguigu.mvc.controller"/> &lt;!-- 配置Thymeleaf视图解析器 --> &lt;bean id="viewResolver" class="org.thymeleaf.spring5.view.ThymeleafViewResolver"> &lt;!-- 顺序 --> &lt;property name="order" value="1"/> &lt;property name="characterEncoding" value="UTF-8"/> &lt;!-- 模板引擎 --> &lt;property name="templateEngine"> &lt;!-- 内部bean --> &lt;bean class="org.thymeleaf.spring5.SpringTemplateEngine"> &lt;property name="templateResolver"> &lt;bean class="org.thymeleaf.spring5.templateresolver .SpringResourceTemplateResolver"> &lt;!-- 视图前缀 --> &lt;property name="prefix" value="/WEB-INF/templates/"/> &lt;!-- 视图后缀 --> &lt;property name="suffix" value=".html"/> &lt;property name="templateMode" value="HTML5"/> &lt;property name="characterEncoding" value="UTF-8" /> &lt;/bean> &lt;/property> &lt;/bean> &lt;/property> &lt;/bean> &lt;!-- 配置默认的servlet处理静态资源 --> &lt;mvc:default-servlet-handler/> &lt;!-- 开启maven的注解驱动 --> &lt;mvc:annotation-driven/> &lt;!-- 配置视图控制器 --> &lt;mvc:view-controller path="/" view-name="index">&lt;/mvc:view-controller> &lt;!-- 配置上传解析器 --> &lt;!-- 配置拦截器 --> 下面拦截器章节 &lt;/beans> 3.4、请求 1）controller
-@RequestMapping("/") public Sting protal() { /**将视图逻辑返回 * prefix：视图前缀，去前缀的路径找 * suffix：后缀，去后缀找 * templateMode：HTML5 * characterEncoding：UTF-8 * 逻辑视图：index * 物理视图：/WEB-INF/templates/index.xml **/ return "index"; } 2）html请求
-&lt;!-- 自动加上上下文路径 localhost:8080/springMVC/hello --> &lt;a th:href="@{/hello}">HelloWorld&lt;/a>&lt;br/> &lt;!-- 不加上下文路径 localhost:8080/hello --> &lt;a href="/hello">HelloWorld&lt;/a> 二、RequestMapping注解 1、功能 从注解名称上我们可以看到，@RequestMapping注解的作用就是将请求和处理请求的控制器方法关联 起来，建立映射关系。
-SpringMVC 接收到指定的请求，就会来找到在映射关系中对应的控制器方法来处理这个请求。
-2、位置 @RequestMapping标识一个类:设置映射请求的请求路径的初始信息
-@RequestMapping标识一个方法:设置映射请求请求路径的具体信息
-@Controller @RequestMapping("/test") public class RequestMappingController { //此时请求映射所映射的请求的请求路径为:/test/testRequestMapping @RequestMapping("/testRequestMapping") public String testRequestMapping(){ return "success"; } } 3、value属性 1）注解的value属性通过请求的请求地址匹配请求映射
-2）注解的value属性是一个字符串类型的数组，表示该请求映射能够匹配多个请求地址 所对应的请求
-@RequestMapping( value = {"/testRequestMapping", "/test"} ) 3）注解的value属性必须设置，至少通过请求地址匹配请求映射
-4、method属性 1）method属性通过请求的请求方式(get或post)匹配请求映射
-2）method属性是一个RequestMethod类型的数组，表示该请求映射能够匹配 多种请求方式的请求
-若当前请求的请求地址满足请求映射的value属性，但是请求方式不满足method属性，则浏览器报错 405:Request method &lsquo;POST&rsquo; not supported
-@RequestMapping( value = {"/testRequestMapping", "/test"}, method = {RequestMethod.GET, RequestMethod.POST} ) public String testRequestMapping(){ return "success"; } 3）派生注解
-@GetMapping@PostMapping@PutMapping@DeleteMapping
-但是目前浏览器只支持get和post，若在form表单提交时，为method设置了其他请求方式的字符 串(put或delete)，则按照默认的请求方式get处理
-若要发送put和delete请求，则需要通过spring提供的过滤器HiddenHttpMethodFilter，在 RESTful部分会讲到
-5、params属性 params属性通过请求的请求参数匹配请求映射
-params属性是一个字符串类型的数组，可以通过四种表达式设置请求参数 和请求映射的匹配关系
-"param":要求请求映射所匹配的请求必须携带param请求参数 "!param":要求请求映射所匹配的请求必须不能携带param请求参数 "param=value":要求请求映射所匹配的请求必须携带param请求参数且param=value "param!=value":要求请求映射所匹配的请求必须携带param请求参数但是param!=value 若当前请求满足@RequestMapping注解的value和method属性，但是不满足params属性，此时 页面回报错400:Parameter conditions "username, password!=123456" not met for actual request parameters: username={admin}, password={123456} 案例：
-@RequestMapping( value = {"/testRequestMapping", "/test"} ,method = {RequestMethod.GET, RequestMethod.POST} ,params = {"username","password!=123456"} ) public String testRequestMapping(){ return "success"; } 6、headers属性 headers属性通过请求的请求头信息匹配请求映射
-headers属性是一个字符串类型的数组，可以通过四种表达式设置请求头信 息和请求映射的匹配关系
-"header":要求请求映射所匹配的请求必须携带header请求头信息 "!header":要求请求映射所匹配的请求必须不能携带header请求头信息 "header=value":要求请求映射所匹配的请求必须携带header请求头信息且header=value "header!=value":要求请求映射所匹配的请求必须携带header请求头信息且header!=value 若当前请求满足@RequestMapping注解的value和method属性，但是不满足headers属性，此时页面 显示404错误，即资源未找到 7、支持ant风格的路径 ?:表示任意的单个字符 *:表示任意的0个或多个字符 **:表示任意层数的任意目录 注意:在使用**时，只能使用/**/xxx的方式 8、支持路径中的占位符 原始方式:/deleteUser?id=1
-rest方式:/user/delete/1
-SpringMVC路径中的占位符常用于RESTful风格中，当请求路径中将某些数据通过路径的方式传输到服 务器中，就可以在相应的@RequestMapping注解的value属性中通过占位符{xxx}表示传输的数据，在 通过@PathVariable注解，将占位符所表示的数据赋值给控制器方法的形参
-&lt;a th:href="@{/testRest/1/admin}">测试路径中的占位符-->/testRest&lt;/a>&lt;br> @RequestMapping("/testRest/{id}/{username}") public String testRest(@PathVariable("id") String id, @PathVariable("username") String username){ System.out.println("id:"+id+",username:"+username); return "success"; } //最终输出的内容为-->id:1,username:admin 9、获取请求参数 1）通过ServletAPI获取 将HttpServletRequest作为控制器方法的形参，此时HttpServletRequest类型的参数表示封装了当前请 求的请求报文的对象
-@RequestMapping("/testParam") public String testParam(HttpServletRequest request){ String username = request.getParameter("username"); String password = request.getParameter("password"); System.out.println("username:"+username+",password:"+password); return "success"; } 2）通过形参获取请求参数 在控制器方法的形参位置，设置和请求参数同名的形参，当浏览器发送请求，匹配到请求映射时，在DispatcherServlet中就会将请求参数赋值给相应的形参
-&lt;a th:href="@{/testParam(username='admin',password=123456)}">测试获取请求参数-- >/testParam&lt;/a>&lt;br> @RequestMapping("/testParam") public String testParam(String username, String password){ System.out.println("username:"+username+",password:"+password); return "success"; } 注:
-若请求所传输的请求参数中有多个同名的请求参数，此时可以在控制器方法的形参中设置字符串 数组或者字符串类型的形参接收此请求参数 若使用字符串数组类型的形参，此参数的数组中包含了每一个数据 若使用字符串类型的形参，此参数的值为每个数据中间使用逗号拼接的结果 3）@CookieValue @CookieValue是将cookie数据和控制器方法的形参创建映射关系
-@CookieValue注解一共有三个属性:value、required、defaultValue，用法同@RequestParam
-三、域对象共享数据 1、使用ServletAPI向request @RequestMapping("/testServletAPI") public String testServletAPI(HttpServletRequest request){ request.setAttribute("testScope", "hello,servletAPI"); return "success"; } 2、使用ModelAndView向request域对象共享数据 @RequestMapping("/testModelAndView") public ModelAndView testModelAndView(){ /** * ModelAndView有Model和View的功能 * Model主要用于向请求域共享数据 * View主要用于设置视图，实现页面跳转 */ ModelAndView mav = new ModelAndView(); //向请求域共享数据 mav.addObject("testScope", "hello,ModelAndView"); //设置视图，实现页面跳转 mav.setViewName("success"); return mav; } 3、使用Model向request域对象共享数据 @RequestMapping("/testModel") public String testModel(Model model){ model.addAttribute("testScope", "hello,Model"); return "success"; } 4、使用map向request域对象共享数据 @RequestMapping("/testMap") public String testMap(Map&lt;String, Object> map){ map.put("testScope", "hello,Map"); return "success"; } 5、使用ModelMap向request域对象共享数据 @RequestMapping("/testModelMap") public String testModelMap(ModelMap modelMap){ modelMap.addAttribute("testScope", "hello,ModelMap"); return "success"; } 6、Model、ModelMap、Map的关系 Model、ModelMap、Map类型的参数其实本质上都是 BindingAwareModelMap 类型的
-public interface Model{} public class ModelMap extends LinkedHashMap&lt;String, Object> {} public class ExtendedModelMap extends ModelMap implements Model {} public class BindingAwareModelMap extends ExtendedModelMap {} 7、向session域共享数据 @RequestMapping("/testSession") public String testSession(HttpSession session){ session.setAttribute("testSessionScope", "hello,session"); return "success"; } 8、向application域共享数据 @RequestMapping("/testApplication") public String testApplication(HttpSession session){ ServletContext application = session.getServletContext(); application.setAttribute("testApplicationScope", "hello,application"); return "success"; } 所有的域对象共享数据最后都封装到了ModelAndView当中
-四、SpringMVC视图 SpringMVC中的视图是View接口，视图的作用渲染数据，将模型Model中的数据展示给用户
-SpringMVC视图的种类很多，默认有转发视图和重定向视图
-当工程引入jstl的依赖，转发视图会自动转换为JstlView
-若使用的视图技术为Thymeleaf，在SpringMVC的配置文件中配置了Thymeleaf的视图解析器，由此视 图解析器解析之后所得到的是ThymeleafView
-1、ThymeleafView 当控制器方法中所设置的视图名称没有任何前缀时，此时的视图名称会被SpringMVC配置文件中所配置的视图解析器解析，视图名称拼接视图前缀和视图后缀所得到的最终路径，会通过转发的方式实现跳转
-@RequestParam("/") public String getOne() { //返回首页，由springmvc中的ThymeleafViewResolver视图解析器来进行解析 return "index"; } 2、转发视图 SpringMVC中默认的转发视图是InternalResourceView
-SpringMVC中创建转发视图的情况:
-当控制器方法中所设置的视图名称以"forward:&ldquo;为前缀时，创建InternalResourceView视图，此时的视 图名称不会被SpringMVC配置文件中所配置的视图解析器解析，而是会将前缀"forward:&ldquo;去掉，剩余部分作为最终路径通过转发的方式实现跳转
-例如"forward:/"，&ldquo;forward:/employee&rdquo;
-@RequestMapping("/testForward") public String testForward(){ return "forward:/testHello"; } 3、重定向视图 SpringMVC中默认的重定向视图是RedirectView
-当控制器方法中所设置的视图名称以"redirect:&ldquo;为前缀时，创建RedirectView视图，此时的视图名称不 会被SpringMVC配置文件中所配置的视图解析器解析，而是会将前缀"redirect:&ldquo;去掉，剩余部分作为最 终路径通过重定向的方式实现跳转
-例如"redirect:/"，&ldquo;redirect:/employee&rdquo;
-注：重定向视图在解析时，会先将redirect:前缀去掉，然后会判断剩余部分是否以/开头，若是则会自 动拼接上下文路径
-@RequestMapping("/testRedirect") public String testRedirect(){ return "redirect:/testHello"; } 4、视图控制器view-controller 当控制器方法中，仅仅用来实现页面跳转，即只需要设置视图名称时，可以将处理器方法使用view-controller标签进行表示，在springmvc配置文件中
-&lt;!-- path:设置处理的请求地址 view-name:设置请求地址所对应的视图名称 --> &lt;mvc:view-controller path="/testView" view-name="success">&lt;/mvc:view-controller> 注: 当SpringMVC中设置任何一个view-controller时，其他控制器中的请求映射将全部失效，此时需
-要在SpringMVC的核心配置文件中设置开启mvc注解驱动的标签:
-5、注解扫描驱动 &lt;mvc:annotation-driven />
-四、Restful 1、简介 REST:Representational State Transfer，表现层资源状态转移。
-1资源
-资源是一种看待服务器的方式，即，将服务器看作是由很多离散的资源组成。每个资源是服务器上一个 可命名的抽象概念。因为资源是一个抽象的概念，所以它不仅仅能代表服务器文件系统中的一个文件、 数据库中的一张表等等具体的东西，可以将资源设计的要多抽象有多抽象，只要想象力允许而且客户端 应用开发者能够理解。与面向对象设计类似，资源是以名词为核心来组织的，首先关注的是名词。一个 资源可以由一个或多个URI来标识。URI既是资源的名称，也是资源在Web上的地址。对某个资源感兴 趣的客户端应用，可以通过资源的URI与其进行交互。
-2资源的表述
-资源的表述是一段对于资源在某个特定时刻的状态的描述。可以在客户端-服务器端之间转移(交 换)。资源的表述可以有多种格式，例如HTML/XML/JSON/纯文本/图片/视频/音频等等。资源的表述格 式可以通过协商机制来确定。请求-响应方向的表述通常使用不同的格式。
-3状态转移
-状态转移说的是:在客户端和服务器端之间转移(transfer)代表资源状态的表述。通过转移和操作资 源的表述，来间接实现操作资源的目的。
-2、RESTful的实现 具体说，就是 HTTP 协议里面，四个表示操作方式的动词:GET、POST、PUT、DELETE。
-它们分别对应四种基本操作:
-GET 用来获取资源，
-POST 用来新建资源，
-PUT 用来更新资源，
-DELETE 用来删除资源。
-REST 风格提倡 URL 地址使用统一的风格设计，从前到后各个单词使用斜杠分开，不使用问号键值对方 式携带请求参数，而是将要发送给服务器的数据作为 URL 地址的一部分，以保证整体风格的一致性。
-3、HiddenHttpMethodFilter 由于浏览器只支持发送get和post方式的请求，那么该如何发送put和delete请求呢?
-SpringMVC 提供了 HiddenHttpMethodFilter 帮助我们将 POST 请求转换为 DELETE 或 PUT 请求
-HiddenHttpMethodFilter 处理put和delete请求的条件:
-a>当前请求的请求方式必须为post
-b>当前请求必须传输请求参数_method
-满足以上条件，HiddenHttpMethodFilter 过滤器就会将当前请求的请求方式转换为请求参数 _method的值，因此请求参数_method的值才是最终的请求方式
-在web.xml中注册HiddenHttpMethodFilter
-&lt;form th:action="@{/hello}" method="post"> &lt;input type="submit" value="测试method属性"> &lt;/form> &lt;filter> &lt;filter-name>HiddenHttpMethodFilter&lt;/filter-name> &lt;filter-class>org.springframework.web.filter.HiddenHttpMethodFilter&lt;/filter-class> &lt;/filter> &lt;filter-mapping> &lt;filter-name>HiddenHttpMethodFilter&lt;/filter-name> &lt;url-pattern>/*&lt;/url-pattern> &lt;/filter-mapping> 五、处理Ajax 六、文件上传和下载 七、拦截器 &lt;bean id="firstInterceptor" class="com.lizi.interceptor.FirstInterceptor"/> &lt;mvc:interceptors> &lt;!--1.直接填bean--> &lt;bean class="com.lizi.interceptor.FirstInterceptor"/> &lt;!--2.引用外面bean--> &lt;ref bean="firstInterceptor"/> &lt;!--3.规则添加bean--> &lt;mvc:interceptor> &lt;mvc:mapping path="/**"/> &lt;mvc:exclude-mapping path="/abc"/> &lt;ref bean="firstInterceptor"/> &lt;/mvc:interceptor> &lt;/mvc:interceptors> 八、异常处理器 九、注解配置SpringMVC 十、执行流程 十一、扩展使用 docker exec -it chemex ip addr</content></entry></search>
+PageInfo{ pageNum=8, pageSize=4, size=2, startRow=29, endRow=30, total=30, pages=8, list=Page{ count=true, pageNum=8, pageSize=4, startRow=28, endRow=32, total=30, pages=8, reasonable=false, pageSizeZero=false }, prePage=7, nextPage=0, isFirstPage=false, isLastPage=true, hasPreviousPage=true, hasNextPage=false, navigatePages=5, navigateFirstPage=4, navigateLastPage=8, navigatepageNums=[4, 5, 6, 7, 8] } 常用数据: pageNum:当前页的页码 pageSize:每页显示的条数 size:当前页显示的真实条数 total:总记录数 pages:总页数 prePage:上一页的页码 nextPage:下一页的页码</content></entry><entry><title>关于我的</title><url>https://zhang4014439175.github.io/about.html</url><categories/><tags/><content type="html"> 职业：后端攻城师 —— 一个90后程序员，终身学习者。
+评价：对技术充满热情，充满学习的动力。—— 只要投入时间去学，没有学不会的东西。
+技能：主职业是后端（Java、Python）、运维、大数据的技术栈也有所涉及。
+业余：业余时间学习过设计的知识，如果逮住合适的机会，也会培养全方位的技能。
+娱乐：爱阅读，但读不进文学名著；军事政治爱好者，跑步锻炼忠实粉丝；喜欢 MMORPG 游戏，但现阶段还是要以赚钱为主，等退休了再玩个痛快。
+心态：爱生活、爱阅读、爱学习、爱拼搏、爱大自然。 原则：常怀感恩的心。
+社交：一个人走得快，一群人走得远。
+理财：人生就像滚雪球，重要的是，找到那条又湿又长的雪道。
+一、心路历程： 小学时候喜欢玩电脑，刚开始没有电脑的时候喜欢往别人家跑，老妈为了把我拴住于是买了第一台电脑。家里一台电脑经受了我的好多锤炼，主机、宽带处理问题都是自己搞。
+高中时候自学很多软件，但是没有专研下去。上大学前学习艺术，于是填志愿去了视觉传达设计（保底也能去打印店作业）。但是对计算机有浓厚的兴趣，因此利用课余时间自学 Java 技术栈。
+大三实习期间走出校门，转型到了 IT 行业。在老家山西干了一年Java，开始主做前端。前端能及时给出视觉反馈的特点，成了我热衷这个岗位的最大原因。
+有着去大厂的梦想，不过条条大路通罗马，大厂是一条路但不是唯一的路，因而充实好自己最重要，有机会就努力抓住机会，没有机会就自己创造机会。
+我是一个普通的程序员，一个平凡的 90 后，但我不想让自己的人生平庸，奥力给！</content></entry></search>
