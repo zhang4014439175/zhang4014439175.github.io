@@ -12,13 +12,13 @@
 &nbsp;</span></span>
 <span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>4117 字</span></span>
+<span class=leancloud-world-count>4225 字</span></span>
 <span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
 <span class=leancloud-view-count>9分钟</span></span>
 <span id=/post/docker%E4%B8%89%E5%AE%89%E8%A3%85mysql%E5%92%8Credis%E9%9B%86%E7%BE%A4/ class="leancloud_visitors post-visitor" data-flag-title=docker（三）集群><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=一mysql主从复制>一、mysql主从复制</h1><p>新建主服务器容器实例3307</p><p>进入/mydata/mysql-master/conf目录下新建my.cnf</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#666>[</span>mysqld<span style=color:#666>]</span> 
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p>        Docker 是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows操作系统的机器上，也可以实现虚拟化。容器是完全使用沙箱机制，相互之间不会有任何接口。</p><h1 id=一mysql主从复制>一、mysql主从复制</h1><p>新建主服务器容器实例3307</p><p>进入/mydata/mysql-master/conf目录下新建my.cnf</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#666>[</span>mysqld<span style=color:#666>]</span> 
 </span></span><span style=display:flex><span><span style=color:#080;font-style:italic>## 设置server_id，同一局域网中需要唯一 </span>
 </span></span><span style=display:flex><span><span style=color:#b8860b>server_id</span><span style=color:#666>=</span>101  
 </span></span><span style=display:flex><span><span style=color:#080;font-style:italic>## 指定不需要同步的数据库名称 </span>

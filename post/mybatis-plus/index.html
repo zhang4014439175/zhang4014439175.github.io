@@ -12,13 +12,13 @@
 &nbsp;</span></span>
 <span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>2055 字</span></span>
+<span class=leancloud-world-count>2224 字</span></span>
 <span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
 <span class=leancloud-view-count>5分钟</span></span>
 <span id=/post/mybatis-plus/ class="leancloud_visitors post-visitor" data-flag-title=Java框架-MybatisPlus><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=一条件构造>一、条件构造</h1><p>子查询</p><p>queryWrapper.inSql(&ldquo;id&rdquo;, &ldquo;select id from t_user where id &lt;= 3&rdquo;);</p><p>组装参数条件</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>queryWrapper
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p>        Mybatis-Plus（简称MP）是一个 Mybatis 的增强工具，在 Mybatis 的基础上只做增强不做改变，为简化开发、提高效率而生。这是官方给的定义，关于mybatis-plus的更多介绍及特性，可以参考mybatis-plus官网。那么它是怎么增强的呢？其实就是它已经封装好了一些crud方法，我们不需要再写xml了，直接调用这些方法就行，就类似于JPA。</p><h1 id=一条件构造>一、条件构造</h1><p>子查询</p><p>queryWrapper.inSql(&ldquo;id&rdquo;, &ldquo;select id from t_user where id &lt;= 3&rdquo;);</p><p>组装参数条件</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>queryWrapper
 </span></span><span style=display:flex><span>        <span style=color:#666>.</span><span style=color:#b44>like</span><span style=color:#666>(</span>StringUtils<span style=color:#666>.</span><span style=color:#b44>isNotBlank</span><span style=color:#666>(</span>username<span style=color:#666>),</span> <span style=color:#b44>&#34;username&#34;</span><span style=color:#666>,</span> <span style=color:#b44>&#34;a&#34;</span><span style=color:#666>)</span>
 </span></span><span style=display:flex><span>        <span style=color:#666>.</span><span style=color:#b44>ge</span><span style=color:#666>(</span>ageBegin <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>null</span><span style=color:#666>,</span> <span style=color:#b44>&#34;age&#34;</span><span style=color:#666>,</span> ageBegin<span style=color:#666>)</span>
 </span></span><span style=display:flex><span>        <span style=color:#666>.</span><span style=color:#b44>le</span><span style=color:#666>(</span>ageEnd <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>null</span><span style=color:#666>,</span> <span style=color:#b44>&#34;age&#34;</span><span style=color:#666>,</span> ageEnd<span style=color:#666>);</span>

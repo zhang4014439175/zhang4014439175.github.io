@@ -12,13 +12,13 @@
 &nbsp;</span></span>
 <span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>7575 字</span></span>
+<span class=leancloud-world-count>7679 字</span></span>
 <span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
 <span class=leancloud-view-count>16分钟</span></span>
 <span id=/post/mybatis%E4%B8%80/ class="leancloud_visitors post-visitor" data-flag-title=Java框架-MybatisPlus><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=一特性>一、特性</h1><ol><li><p>MyBatis 是支持定制化 SQL、存储过程以及高级映射的优秀的持久层框架 2) MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集</p></li><li><p>MyBatis可以使用简单的XML或注解用于配置和原始映射，将接口和Java的POJO(Plain Old Java Objects，普通的Java对象)映射成数据库中的记录</p></li><li><p>MyBatis 是一个 半自动的ORM(Object Relation Mapping)框架</p></li></ol><h1 id=二实战>二、实战</h1><h2 id=1核心配置文件>1、核心配置文件</h2><p>pom文件</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span>		<span style=color:green;font-weight:700>&lt;dependency&gt;</span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p>        mybatis在持久层框架中还是比较火的，一般项目都是基于ssm。虽然mybatis可以直接在xml中通过SQL语句操作数据库，很是灵活。但正其操作都要通过SQL语句进行，就必须写大量的xml文件，很是麻烦。</p><h1 id=一特性>一、特性</h1><ol><li><p>MyBatis 是支持定制化 SQL、存储过程以及高级映射的优秀的持久层框架 2) MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集</p></li><li><p>MyBatis可以使用简单的XML或注解用于配置和原始映射，将接口和Java的POJO(Plain Old Java Objects，普通的Java对象)映射成数据库中的记录</p></li><li><p>MyBatis 是一个 半自动的ORM(Object Relation Mapping)框架</p></li></ol><h1 id=二实战>二、实战</h1><h2 id=1核心配置文件>1、核心配置文件</h2><p>pom文件</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span>		<span style=color:green;font-weight:700>&lt;dependency&gt;</span>
 </span></span><span style=display:flex><span>            <span style=color:green;font-weight:700>&lt;groupId&gt;</span>org.mybatis<span style=color:green;font-weight:700>&lt;/groupId&gt;</span>
 </span></span><span style=display:flex><span>            <span style=color:green;font-weight:700>&lt;artifactId&gt;</span>mybatis<span style=color:green;font-weight:700>&lt;/artifactId&gt;</span>
 </span></span><span style=display:flex><span>            <span style=color:green;font-weight:700>&lt;version&gt;</span>3.5.9<span style=color:green;font-weight:700>&lt;/version&gt;</span>

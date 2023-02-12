@@ -14,13 +14,13 @@
 &nbsp;</span></span>
 <span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>6578 字</span></span>
+<span class=leancloud-world-count>6719 字</span></span>
 <span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
 <span class=leancloud-view-count>14分钟</span></span>
 <span id=/post/rabbitmq%E4%BA%8C/ class="leancloud_visitors post-visitor" data-flag-title=RabbitMQ（二）><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=一延迟队列springboot>一、延迟队列（SpringBoot）</h1><p>配置文件</p><h2 id=1基于死信完成延迟队列>1、基于死信完成延迟队列</h2><p>死信队列参数：</p><p>x-dead-letter-exchange：死信交换机</p><p>x-dead-letter-routing-key：死信路由key</p><p>x-message-ttl：消息过期时间</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p>        MQ(message queue)，从字面意思上看，本质是个队列，FIFO 先入先出，只不过队列中存放的内容是 message 而已，还是一种跨进程的通信机制，用于上下游传递消息。在互联网架构中，MQ 是一种非常常 见的上下游“逻辑解耦+物理解耦”的消息通信服务。使用了 MQ 之后，消息发送上游只需要依赖 MQ，不 用依赖其他服务。</p><h1 id=一延迟队列springboot>一、延迟队列（SpringBoot）</h1><p>配置文件</p><h2 id=1基于死信完成延迟队列>1、基于死信完成延迟队列</h2><p>死信队列参数：</p><p>x-dead-letter-exchange：死信交换机</p><p>x-dead-letter-routing-key：死信路由key</p><p>x-message-ttl：消息过期时间</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#a2f>@Configuration</span>
 </span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>public</span> <span style=color:#a2f;font-weight:700>class</span> <span style=color:#00f>TtlQueueConfig</span> <span style=color:#666>{</span>
 </span></span><span style=display:flex><span>

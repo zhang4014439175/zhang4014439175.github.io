@@ -14,13 +14,13 @@
 &nbsp;</span></span>
 <span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>2230 字</span></span>
+<span class=leancloud-world-count>2373 字</span></span>
 <span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
 <span class=leancloud-view-count>5分钟</span></span>
 <span id=/post/spring%E6%BA%90%E7%A0%81%E4%BA%8C/ class="leancloud_visitors post-visitor" data-flag-title=Java框架-Spring源码（二）><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=一refresh>一、refresh</h1><h2 id=1preparerefresh>1、prepareRefresh</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>/**
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p>        Spring框架是一个开放源代码的J2EE应用程序框架，由Rod Johnson发起，是针对bean的生命周期进行管理的轻量级容器（lightweight container）。 Spring解决了开发者在J2EE开发中遇到的许多常见的问题，提供了功能强大IOC、AOP及Web MVC等功能。</p><h1 id=一refresh>一、refresh</h1><h2 id=1preparerefresh>1、prepareRefresh</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>/**
 </span></span><span style=display:flex><span> * 前戏，做容器刷新前的准备工作
 </span></span><span style=display:flex><span> * 1、设置容器的启动时间
 </span></span><span style=display:flex><span> * 2、设置活跃状态为true

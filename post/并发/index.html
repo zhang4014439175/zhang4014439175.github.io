@@ -14,13 +14,13 @@
 &nbsp;</span></span>
 <span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>10728 字</span></span>
+<span class=leancloud-world-count>10849 字</span></span>
 <span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
 <span class=leancloud-view-count>22分钟</span></span>
 <span id=/post/%E5%B9%B6%E5%8F%91/ class="leancloud_visitors post-visitor" data-flag-title=Java进阶-多线程并发><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p>        多线程并发是后端开发中常见问题，也是最难解决的问题，下功夫多研究研究，本文档是java juc 的学习笔记。</p><h1 id=一什么是-juc>一、什么是 JUC</h1><p><strong>1、进程和线程</strong></p><p><strong>进程</strong>是计算机中的程序关于某数据集合上的一次运行活动，是系 统进行资源分配和调度的基本单位，是操作系统结构的基础。 在当代面向线程 设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的 描述，进程是程序的实体。是计算机中的程序关于某数据集合上的一次运行活 动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。程序是 指令、数据及其组织形式的描述，进程是程序的实体。</p><p><strong>线程</strong> 是操作系统能够进行运算调度的最小单位。它被包含在进程之 中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流， 一个进程中可以并发多个线程，每条线程并行执行不同的任务。</p><p><strong>总结来说</strong></p><p><strong>进程</strong>：指在系统中正在运行的一个应用程序;程序一旦运行就是进程;进程— —资源分配的最小单位。</p><p><strong>线程</strong>：系统分配处理器时间资源的基本单元，或者说进程之内独立执行的一个 单元执行流。线程——程序执行的最小单位。</p><p><strong>1.1线程的状态</strong></p><p><strong>2、wait和sleep</strong></p><p>(1)sleep 是 Thread 的静态方法，wait 是 Object 的方法，任何对象实例都 能调用。</p><p>(2)sleep 不会释放锁，它也不需要占用锁。wait 会释放锁，但调用它的前提 是当前线程占有锁(即代码要在 synchronized 中)。</p><p>(3)它们都可以被 interrupted 方法中断。</p><p><strong>3、并行和串行</strong></p><p>**串行：**表示所有任务都一一按先后顺序进行。串行意味着必须先装完一车柴才能
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p>        juc是java中java.util.concurrent包的简称.它位于jdk的rt.jar中，是jdk的核心工具包之一。从字面上来理解就是java并发工具包。其主要内容包含3个部分atomic包、locks包以直接在该包下的直接接口和类。多线程并发是后端开发中常见问题，也是最难解决的问题，下功夫多研究研究，本文档是java juc 的学习笔记。</p><h1 id=一什么是-juc>一、什么是 JUC</h1><p><strong>1、进程和线程</strong></p><p><strong>进程</strong>是计算机中的程序关于某数据集合上的一次运行活动，是系 统进行资源分配和调度的基本单位，是操作系统结构的基础。 在当代面向线程 设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的 描述，进程是程序的实体。是计算机中的程序关于某数据集合上的一次运行活 动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。程序是 指令、数据及其组织形式的描述，进程是程序的实体。</p><p><strong>线程</strong> 是操作系统能够进行运算调度的最小单位。它被包含在进程之 中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流， 一个进程中可以并发多个线程，每条线程并行执行不同的任务。</p><p><strong>总结来说</strong></p><p><strong>进程</strong>：指在系统中正在运行的一个应用程序;程序一旦运行就是进程;进程— —资源分配的最小单位。</p><p><strong>线程</strong>：系统分配处理器时间资源的基本单元，或者说进程之内独立执行的一个 单元执行流。线程——程序执行的最小单位。</p><p><strong>1.1线程的状态</strong></p><p><strong>2、wait和sleep</strong></p><p>(1)sleep 是 Thread 的静态方法，wait 是 Object 的方法，任何对象实例都 能调用。</p><p>(2)sleep 不会释放锁，它也不需要占用锁。wait 会释放锁，但调用它的前提 是当前线程占有锁(即代码要在 synchronized 中)。</p><p>(3)它们都可以被 interrupted 方法中断。</p><p><strong>3、并行和串行</strong></p><p>**串行：**表示所有任务都一一按先后顺序进行。串行意味着必须先装完一车柴才能
 运送这车柴，只有运送到了，才能卸下这车柴，并且只有完成了这整个三个步
 骤，才能进行下一个步骤。串行是一次只能取得一个任务，并执行这个任务。</p><p>**并行：**意味着可以同时取得多个任务，并同时去执行所取得的这些任务。并行模
 式相当于将长长的一条队列，划分成了多条短队列，所以并行缩短了任务队列
