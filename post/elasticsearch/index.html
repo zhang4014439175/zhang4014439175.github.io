@@ -1,0 +1,441 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Elasticsearch - 热爱生活与梦想</title><meta name=keywords content="博客,程序员,架构师,思考,读书,笔记,技术,分享,大数据,产品"><meta name=author content="凡梦星尘"><meta property="og:title" content="Elasticsearch"><meta property="og:site_name" content="热爱生活与梦想"><meta property="og:image" content="https://zhang4014439175.github.ioimg/author.jpg"><meta name=title content="Elasticsearch - 热爱生活与梦想"><meta name=description content="Sample article showcasing basic String syntax."><link rel="shortcut icon" href=https://zhang4014439175.github.ioimg/favicon.ico><link rel=apple-touch-icon href=https://zhang4014439175.github.ioimg/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://zhang4014439175.github.ioimg/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://zhang4014439175.github.iocss/main.css rel=stylesheet type=text/css><link href=https://zhang4014439175.github.iocss/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
+<span class=site-title>热爱生活与梦想</span>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://zhang4014439175.github.io/post/elasticsearch/ itemprop=url>Elasticsearch</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-04-29">2022-04-29</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/elasticsearch itemprop=url rel=index><span itemprop=name>Elasticsearch</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>3507 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>7分钟</span></span>
+<span id=/post/elasticsearch/ class="leancloud_visitors post-visitor" data-flag-title=Elasticsearch><i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=一es入门>一、es入门</h1><h2 id=1docker安装es-kibana>1、docker安装es 、kibana</h2><p>docker run &ndash;name elasticsearch -p 9200:9200 -p 9300:9300 -e &ldquo;discovery.type=single-node&rdquo; -e ES_JAVA_OPTS="-Xms64m -Xmx512m" -v /mydata/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -v /mydata/elasticsearch/data:/usr/share/elasticsearch/data -v /mydata/elasticsearch/plugins:/usr/share/elasticsearch/plugins -d elasticsearch:7.4.2</p><p>docker run &ndash;name kibana -e ELASTICSEARCH_HOSTS=http://192.168.56.102:9200 -p 5601:5601 -d kibana:7.4.2</p><p>2、查看节点信息</p><p>http://192.168.56.10:9200/_cat/nodes</p><p>3、官方文档</p><p>官方文档:https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html</p><p>官方中文:https://www.elastic.co/guide/cn/elasticsearch/guide/current/foreword_id.html</p><p>社区中文:https://es.xiaoleilu.com/index.html <a href=http://doc.codingdict.com/elasticsearch/0/ target=_blank rel=noopener>http://doc.codingdict.com/elasticsearch/0/</a></p><h2 id=2nginx>2、nginx</h2><p>Nginx.org/en/docs</p><ul><li><p> 随便启动一个nginx实例，只是为了复制出配置  docker run -p 80:80 &ndash;name nginx -d nginx:1.10</p></li><li><p> 将容器内的配置文件拷贝到当前目录:docker container cp nginx:/etc/nginx .  别忘了后面的点</p></li><li><p> 修改文件名称:mv nginx conf 把这个 conf 移动到/mydata/nginx 下</p></li><li><p> 终止原容器:docker stop nginx</p></li><li><p> 执行命令删除原容器:docker rm $ContainerId</p></li><li><p> 创建新的nginx;执行以下命令</p><p>docker run -p 80:80 &ndash;name nginx -v /mydata/nginx/html:/usr/share/nginx/html -v /mydata/nginx/logs:/var/log/nginx -v /mydata/nginx/conf:/etc/nginx -d nginx:1.10</p><p> 给nginx的html下面放的所有资源可以直接访问;</p></li></ul><h3 id=21动静分离>2.1、动静分离</h3><p>静：图片、js、css等静态资源（以实际文件存在的方式）</p><p>动：服务器需要处理的请求</p><p>静态资源都放在static文件夹下就可以按照路径直接访问</p><h3 id=22nginx配置文件>2.2、nginx配置文件</h3><p>1）全局块</p><p>2）events块</p><p>3）http块</p><p>​ http全局块</p><p>​ 配置upstream 块</p><p>​ server块</p><p>​ location</p><p>​ proxy_pass http://直接路由到上游的upstream块</p><p>​ location</p><h3 id=23动静分离>2.3、动静分离</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>    location /static/ {
+</span></span><span style=display:flex><span>        root /usr/share/nginx/html;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    location / {
+</span></span><span style=display:flex><span>        proxy_set_header Host $host;
+</span></span><span style=display:flex><span>        proxy_pass http://gulimall;
+</span></span><span style=display:flex><span>    }
+</span></span></code></pre></div><h3 id=23问题>2.3、问题</h3><p>1）nginx代理给网关的时候，会丢失请求的host信息</p><p>Proxy_set_header Host $host</p><p>2）去gateway过滤域名</p><h1 id=二初步检索>二、初步检索</h1><h2 id=1_cat>1、_cat</h2><p>GET /_cat/nodes:查看所有节点 _</p><p>GET /_cat/health:查看 es 健康状况</p><p>GET /_cat/master:查看主节点</p><p>GET /_cat/indices:查看所有索引</p><p>show databases;</p><h2 id=2索引一个文档保存>2、索引一个文档(保存)</h2><p>保存一个数据，保存在哪个索引的哪个类型下，指定用哪个唯一标识</p><p>PUT customer/external/1;在 customer 索引下的 external 类型下保存 1 号数据为</p><p>PUT 和 POST 都可以，
+POST 新增。如果不指定 id，会自动生成 id。指定 id 就会修改这个数据，并新增版本号</p><p>PUT 可以新增可以修改。PUT 必须指定 id;由于 PUT 需要指定 id，我们一般都用来做修改 操作，不指定 id 会报错。</p><h2 id=3查询文档>3、查询文档</h2><p>GET customer/external/1</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:green;font-weight:700>&#34;_index&#34;</span>: <span style=color:#b44>&#34;customer&#34;</span>, <span style=color:#080;font-style:italic>//在哪个索引
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:green;font-weight:700>&#34;_type&#34;</span>: <span style=color:#b44>&#34;external&#34;</span>,  <span style=color:#080;font-style:italic>//在哪个类型
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:green;font-weight:700>&#34;_id&#34;</span>: <span style=color:#b44>&#34;1&#34;</span>,						<span style=color:#080;font-style:italic>//记录 id
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	<span style=color:green;font-weight:700>&#34;_version&#34;</span>: <span style=color:#666>2</span>, 				<span style=color:#080;font-style:italic>//版本号
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:green;font-weight:700>&#34;_seq_no&#34;</span>: <span style=color:#666>1</span>, 				<span style=color:#080;font-style:italic>//并发控制字段，每次更新就会+1，用来做乐观锁
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:green;font-weight:700>&#34;_primary_term&#34;</span>: <span style=color:#666>1</span>, 	<span style=color:#080;font-style:italic>//同上，主分片重新分配，如重启，就会变化
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:green;font-weight:700>&#34;found&#34;</span>: <span style=color:#a2f;font-weight:700>true</span>, 
+</span></span><span style=display:flex><span>  <span style=color:green;font-weight:700>&#34;_source&#34;</span>: {					<span style=color:#080;font-style:italic>//真正的内容
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>		<span style=color:green;font-weight:700>&#34;name&#34;</span>: <span style=color:#b44>&#34;John Doe&#34;</span> 
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>更新携带 ?if_seq_no=0&if_primary_term=1</p><h2 id=4更新文档>4、更新文档</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>POST customer/external/1/_update {
+</span></span><span style=display:flex><span>	&#34;doc&#34;:{
+</span></span><span style=display:flex><span>		&#34;name&#34;: &#34;John Doew&#34;
+</span></span><span style=display:flex><span>	} 
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>POST customer/external/1 {
+</span></span><span style=display:flex><span>	&#34;name&#34;: &#34;John Doe2&#34; 
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>PUT customer/external/1 {
+</span></span><span style=display:flex><span>	&#34;name&#34;: &#34;John Doe&#34; 
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=5删除文档索引>5、删除文档&索引</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span>POST /_bulk
+</span></span><span style=display:flex><span>{ &#34;delete&#34;: { &#34;_index&#34;: &#34;website&#34;, &#34;_type&#34;: &#34;blog&#34;, &#34;_id&#34;: &#34;123&#34; }} 
+</span></span><span style=display:flex><span>{ &#34;create&#34;: { &#34;_index&#34;: &#34;website&#34;, &#34;_type&#34;: &#34;blog&#34;, &#34;_id&#34;: &#34;123&#34; }}
+</span></span><span style=display:flex><span>{ &#34;title&#34;: &#34;My first blog post&#34;}
+</span></span><span style=display:flex><span>{ &#34;index&#34;:  {&#34;_index&#34;: &#34;website&#34;, &#34;_type&#34;: &#34;blog&#34;}}
+</span></span><span style=display:flex><span>{ &#34;title&#34;:	&#34;My second blog post&#34;}
+</span></span><span style=display:flex><span>{ &#34;update&#34;: { &#34;_index&#34;: &#34;website&#34;, &#34;_type&#34;: &#34;blog&#34;, &#34;_id&#34;: &#34;123&#34;, &#34;_retry_on_conflict&#34; : 3}} { &#34;doc&#34; : {&#34;title&#34; : &#34;My updated blog post&#34;} }
+</span></span></code></pre></div><p>P109：https://raw.githubusercontent.com/elastic/elasticsearch/7.4/docs/src/test/resources/accounts.json</p><p>P133的json：
+PUTproduct{&ldquo;mappings&rdquo;:{&ldquo;properties&rdquo;:{&ldquo;skuId&rdquo;:{&ldquo;type&rdquo;:&ldquo;long&rdquo;},&ldquo;spuId&rdquo;:{&ldquo;type&rdquo;:&ldquo;keyword&rdquo;},&ldquo;skuTitle&rdquo;:{&ldquo;type&rdquo;:&ldquo;text&rdquo;,&ldquo;analyzer&rdquo;:&ldquo;ik_smart&rdquo;},&ldquo;skuPrice&rdquo;:{&ldquo;type&rdquo;:&ldquo;keyword&rdquo;},&ldquo;skuImg&rdquo;:{&ldquo;type&rdquo;:&ldquo;keyword&rdquo;,&ldquo;index&rdquo;:false,&ldquo;doc_values&rdquo;:false},&ldquo;saleCount&rdquo;:{&ldquo;type&rdquo;:&ldquo;long&rdquo;},&ldquo;hasStock&rdquo;:{&ldquo;type&rdquo;:&ldquo;boolean&rdquo;},&ldquo;hotScore&rdquo;:{&ldquo;type&rdquo;:&ldquo;long&rdquo;},&ldquo;brandId&rdquo;:{&ldquo;type&rdquo;:&ldquo;long&rdquo;},&ldquo;catalogId&rdquo;:{&ldquo;type&rdquo;:&ldquo;long&rdquo;},&ldquo;brandName&rdquo;:{&ldquo;type&rdquo;:&ldquo;keyword&rdquo;,&ldquo;index&rdquo;:false,&ldquo;doc_values&rdquo;:false},&ldquo;brandImg&rdquo;:{&ldquo;type&rdquo;:&ldquo;keyword&rdquo;,&ldquo;index&rdquo;:false,&ldquo;doc_values&rdquo;:false},&ldquo;catalogName&rdquo;:{&ldquo;type&rdquo;:&ldquo;keyword&rdquo;,&ldquo;index&rdquo;:false,&ldquo;doc_values&rdquo;:false},&ldquo;attrs&rdquo;:{&ldquo;type&rdquo;:&ldquo;nested&rdquo;,&ldquo;properties&rdquo;:{&ldquo;attrId&rdquo;:{&ldquo;type&rdquo;:&ldquo;long&rdquo;},&ldquo;attrName&rdquo;:{&ldquo;type&rdquo;:&ldquo;keyword&rdquo;,&ldquo;index&rdquo;:false,&ldquo;doc_values&rdquo;:false},&ldquo;attrValue&rdquo;:{&ldquo;type&rdquo;:&ldquo;keyword&rdquo;}}}}}}</p><p>P136如果静态资源中的JS、CSS效果没有达到。可以在项目中添加一个配置类，再重启项目即可。
+@Configuration
+public class WebMVCConfig extends WebMvcConfigurerAdapter {</p><p>​ @Override
+​ public void addResourceHandlers(ResourceHandlerRegistry registry) {
+​ registry.addResourceHandler("/static/**").addResourceLocations(&ldquo;classpath:/static/&rdquo;);
+​ }
+}</p><h1 id=二进阶检索>二、进阶检索</h1><h2 id=1searchapi>1、SearchAPI</h2><p>ES 支持两种基本方式检索 :</p><p>1.1、一个是通过使用 REST request URI 发送搜索参数(uri+检索参数)</p><table><thead><tr><th>GET bank/_search</th><th>检索 bank 下所有信息，包括 type 和 docs</th></tr></thead><tbody><tr><td>GET bank/_search?q=*&sort=account_number:asc</td><td>请求参数方式检索</td></tr><tr><td></td><td></td></tr></tbody></table><p>响应结果解释:
+took - Elasticsearch 执行搜索的时间(毫秒)
+time_out - 告诉我们搜索是否超时
+_shards - 告诉我们多少个分片被搜索了，以及统计了成功/失败的搜索分片 hits - 搜索结果
+hits.total - 搜索结果
+hits.hits - 实际的搜索结果数组(默认为前 10 的文档)
+sort - 结果的排序 key(键)(没有则按 score 排序</p><p>1.2、另一个是通过使用 REST request body 来发送它们(uri+请求体)</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search 
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;: { 
+</span></span><span style=display:flex><span>		&#34;match_all&#34;: {}
+</span></span><span style=display:flex><span>	}, 
+</span></span><span style=display:flex><span>	&#34;sort&#34;: [
+</span></span><span style=display:flex><span>		{
+</span></span><span style=display:flex><span> 			&#34;account_number&#34;: {
+</span></span><span style=display:flex><span>				&#34;order&#34;: &#34;desc&#34; 
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		} 
+</span></span><span style=display:flex><span>	]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>HTTP 客户端工具(POSTMAN)，get 请求不能携带请求体，我们变为 post 也是一样的 我们 POST 一个 JSON 风格的查询请求体到 _search API。 需要了解，一旦搜索的结果被返回，Elasticsearch 就完成了这次请求，并且不会维护任何 服务端的资源或者结果的 cursor(游标)
+</span></span></code></pre></div><h2 id=2query-dsl>2、Query DSL</h2><p><strong>Elasticsearch</strong> 提供了一个可以执行查询的 <strong>Json</strong> 风格的 <strong>DSL</strong>(<strong>domain-specific language</strong> 领域特 定语言)。这个被称为 Query DSL。该查询语言非常全面，并且刚开始的时候感觉有点复杂， 真正学好它的方法是从一些基础的示例开始的。</p><h3 id=1基本语法>1、基本语法</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	QUERY_NAME: {
+</span></span><span style=display:flex><span>		ARGUMENT: VALUE,
+</span></span><span style=display:flex><span>		ARGUMENT: VALUE,... 
+</span></span><span style=display:flex><span>	},
+</span></span><span style=display:flex><span>	&#34;from&#34;: 0, //分页，开始
+</span></span><span style=display:flex><span>	&#34;size&#34;: 5 //大小
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	QUERY_NAME: { 
+</span></span><span style=display:flex><span>		FIELD_NAME: {
+</span></span><span style=display:flex><span>			ARGUMENT: VALUE,
+</span></span><span style=display:flex><span>			ARGUMENT: VALUE,... 
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	} 
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>案例：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search 
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;: { 
+</span></span><span style=display:flex><span>		&#34;match_all&#34;: {}
+</span></span><span style=display:flex><span>	},
+</span></span><span style=display:flex><span>	&#34;from&#34;: 0, //分页，开始
+</span></span><span style=display:flex><span>	&#34;size&#34;: 5, //大小
+</span></span><span style=display:flex><span>	&#34;sort&#34;: [
+</span></span><span style=display:flex><span>		{
+</span></span><span style=display:flex><span>			&#34;account_number&#34;: {
+</span></span><span style=display:flex><span>				&#34;order&#34;: &#34;desc&#34; 
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		} 
+</span></span><span style=display:flex><span>	]
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>query 定义如何查询，
+</span></span><span style=display:flex><span> match_all 查询类型【代表查询所有的所有】，es 中可以在 query 中组合非常多的查
+</span></span><span style=display:flex><span>询类型完成复杂查询
+</span></span><span style=display:flex><span> 除了 query 参数之外，我们也可以传递其它的参数以改变查询结果。如 sort，size
+</span></span><span style=display:flex><span> from+size限定，完成分页功能
+</span></span><span style=display:flex><span> sort排序，多字段排序，会在前序字段相等时后续字段内部排序，否则以前序为准
+</span></span></code></pre></div><h3 id=2match>2、match</h3><p>match all</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>		&#34;match&#34;:{
+</span></span><span style=display:flex><span>			&#34;account_number&#34;:&#34;20&#34;
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>		&#34;match&#34;:{
+</span></span><span style=display:flex><span>			&#34;address&#34;:&#34;Mill&#34; //包含Mill就行
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=3match_phrase>3、match_phrase</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>		&#34;match_phrase&#34;:{
+</span></span><span style=display:flex><span>			&#34;address&#34;:&#34;mill lane&#34;
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=4multi_match>4、multi_match</h3><p>多字段匹配</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>		&#34;multi_match&#34;:{
+</span></span><span style=display:flex><span>			&#34;query&#34;: &#34;mill movico&#34;,
+</span></span><span style=display:flex><span>			&#34;address&#34;:[&#34;mill lane&#34;]
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=5bool复合查询>5、bool复合查询</h3><p>must：必须满足</p><p>must_not：必须不满足</p><p>should：应该</p><p>range：区间</p><p>Filter：过滤</p><p>match</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>		&#34;bool&#34;:{
+</span></span><span style=display:flex><span>			&#34;must&#34;:[ //必须满足
+</span></span><span style=display:flex><span>				{&#34;match&#34;: {&#34;gender&#34;:&#34;M&#34;}},  //F 女人 M 男人 //必须满足 北京 和 男人 这两个条件
+</span></span><span style=display:flex><span>				{&#34;match&#34;: {&#34;address&#34;:&#34;mill&#34;}}  
+</span></span><span style=display:flex><span>			],
+</span></span><span style=display:flex><span>			&#34;must_not&#34;:[
+</span></span><span style=display:flex><span>				{&#34;match&#34;: {&#34;age&#34;: &#34;38&#34;}}
+</span></span><span style=display:flex><span>			],
+</span></span><span style=display:flex><span>			&#34;should&#34;:[{
+</span></span><span style=display:flex><span>				&#34;match&#34;: {
+</span></span><span style=display:flex><span>					&#34;lastname&#34;: &#34;Wallace&#34;
+</span></span><span style=display:flex><span>				}
+</span></span><span style=display:flex><span>			}]
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>		&#34;bool&#34;:{
+</span></span><span style=display:flex><span>			&#34;must&#34;:[ //必须满足
+</span></span><span style=display:flex><span>				{
+</span></span><span style=display:flex><span>					&#34;range&#34;: {
+</span></span><span style=display:flex><span>						&#34;age&#34;:{
+</span></span><span style=display:flex><span>							&#34;gte&#34;: 18,
+</span></span><span style=display:flex><span>							&#34;lte&#34;: 30
+</span></span><span style=display:flex><span>						}
+</span></span><span style=display:flex><span>					}
+</span></span><span style=display:flex><span>				},
+</span></span><span style=display:flex><span>				{
+</span></span><span style=display:flex><span>					&#34;match&#34;: {
+</span></span><span style=display:flex><span>						&#34;address&#34;: &#34;mill&#34;
+</span></span><span style=display:flex><span>					}
+</span></span><span style=display:flex><span>				}
+</span></span><span style=display:flex><span>			]
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=6filter过滤>6、filter过滤</h3><p>不会贡献score得分</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>		&#34;bool&#34;:{
+</span></span><span style=display:flex><span>			&#34;filter&#34;:{
+</span></span><span style=display:flex><span>				&#34;range&#34;: {
+</span></span><span style=display:flex><span>					&#34;age&#34;:{
+</span></span><span style=display:flex><span>						&#34;gte&#34;: 18,
+</span></span><span style=display:flex><span>						&#34;lte&#34;: 30
+</span></span><span style=display:flex><span>					}
+</span></span><span style=display:flex><span>				}
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=7term查询>7、term查询</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>		&#34;term&#34;:{
+</span></span><span style=display:flex><span>			&#34;balance&#34;:32131
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>		&#34;match&#34;:{
+</span></span><span style=display:flex><span>			&#34;address.keyword&#34;:{
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>1）keyword 和 match_phrase 的区别</p><p>keyword是精确匹配，phrase是短语匹配包含</p><p>全文检索用match、非text字段匹配用term</p><h3 id=8aggregations执行聚合>8、aggregations(执行聚合)</h3><p>聚合提供了从数据中分组和提取数据的能力。最简单的聚合方法大致等于 <strong>SQL GROUP BY</strong> 和 <strong>SQL</strong> 聚合函数。在 <strong>Elasticsearch</strong> 中，您有执行搜索返回 <strong>hits</strong>(命中结果)，并且同时返 回聚合结果，把一个响应中的所有 <strong>hits</strong>(命中结果)分隔开的能力。这是非常强大且有效的， 您可以执行查询和多个聚合，并且在一次使用中得到各自的(任何一个的)返回结果，使用 一次简洁和简化的 <strong>API</strong> 来避免网络往返。</p><p>1）</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>	  &#34;match&#34;:{
+</span></span><span style=display:flex><span>			&#34;address&#34;: &#34;mill&#34;
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	},
+</span></span><span style=display:flex><span>	&#34;aggs&#34;: {
+</span></span><span style=display:flex><span>		&#34;ageAgg&#34;:{  //年龄分组
+</span></span><span style=display:flex><span>			&#34;terms&#34;:{
+</span></span><span style=display:flex><span>				&#34;field&#34;: &#34;age&#34;, 
+</span></span><span style=display:flex><span>				&#34;size&#34;: 10
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		},
+</span></span><span style=display:flex><span>		&#34;ageAvg&#34;:{  //年龄分组
+</span></span><span style=display:flex><span>			&#34;avg&#34;:{
+</span></span><span style=display:flex><span>				&#34;field&#34;: &#34;age&#34;
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		},
+</span></span><span style=display:flex><span>		&#34;balanceAvg&#34;:{  //年龄分组
+</span></span><span style=display:flex><span>			&#34;avg&#34;:{
+</span></span><span style=display:flex><span>				&#34;field&#34;: &#34;balance&#34;
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>加size只看聚合结果</p><p>2）按照年龄聚合，并且请求这些年龄段的这些人的平均薪资</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>	  &#34;match_all&#34;:{}
+</span></span><span style=display:flex><span>	},
+</span></span><span style=display:flex><span>	&#34;aggs&#34;: {
+</span></span><span style=display:flex><span>		&#34;ageAgg&#34;:{  //年龄分组
+</span></span><span style=display:flex><span>			&#34;terms&#34;:{
+</span></span><span style=display:flex><span>				&#34;field&#34;: &#34;age&#34;, 
+</span></span><span style=display:flex><span>				&#34;size&#34;: 10
+</span></span><span style=display:flex><span>			},
+</span></span><span style=display:flex><span>			&#34;aggs&#34;:{
+</span></span><span style=display:flex><span>				&#34;ageAvg&#34;:{
+</span></span><span style=display:flex><span>					&#34;avg&#34;:{
+</span></span><span style=display:flex><span>						&#34;field&#34;: &#34;balance&#34;
+</span></span><span style=display:flex><span>					}
+</span></span><span style=display:flex><span>				}
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>3）查出所有年龄分布，并且这些年龄段中性别M的平均薪资和性别F的平均薪资以及这个年龄段的总体平均薪资</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>GET bank/_search
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	&#34;query&#34;:{
+</span></span><span style=display:flex><span>	  &#34;match_all&#34;:{}
+</span></span><span style=display:flex><span>	},
+</span></span><span style=display:flex><span>	&#34;aggs&#34;: {
+</span></span><span style=display:flex><span>		&#34;ageAgg&#34;:{  //年龄分组
+</span></span><span style=display:flex><span>			&#34;terms&#34;:{
+</span></span><span style=display:flex><span>				&#34;field&#34;: &#34;age&#34;, 
+</span></span><span style=display:flex><span>				&#34;size&#34;: 100
+</span></span><span style=display:flex><span>			},
+</span></span><span style=display:flex><span>			&#34;aggs&#34;:{
+</span></span><span style=display:flex><span>				&#34;genderAgg&#34;:{
+</span></span><span style=display:flex><span>					&#34;terms&#34;:{
+</span></span><span style=display:flex><span>						&#34;field&#34;:&#34;gender.keyword&#34;,
+</span></span><span style=display:flex><span>						&#34;size&#34;: 10
+</span></span><span style=display:flex><span>					},
+</span></span><span style=display:flex><span>					&#34;aggs&#34;:{
+</span></span><span style=display:flex><span>						&#34;balanceAvg&#34;:{
+</span></span><span style=display:flex><span>							&#34;avg&#34;:{
+</span></span><span style=display:flex><span>								&#34;field&#34;: &#34;balance&#34;
+</span></span><span style=display:flex><span>							}
+</span></span><span style=display:flex><span>						}
+</span></span><span style=display:flex><span>					}
+</span></span><span style=display:flex><span>				},
+</span></span><span style=display:flex><span>				&#34;ageBalanceAvg&#34;:{
+</span></span><span style=display:flex><span>					&#34;avg&#34;:{
+</span></span><span style=display:flex><span>						&#34;field&#34;:&#34;balance&#34;
+</span></span><span style=display:flex><span>					}
+</span></span><span style=display:flex><span>				}
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=9type>9、type</h3><p>Nested嵌入式，处理扁平化问题</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>
+</span></span><span style=display:flex><span>GET my_index/_mapping
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>PUT my_index/_doc/1
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  &#34;group&#34;: &#34;fans&#34;,
+</span></span><span style=display:flex><span>  &#34;user&#34;:[
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      &#34;first&#34;:&#34;John&#34;,
+</span></span><span style=display:flex><span>      &#34;last&#34;: &#34;Smith&#34;
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>      &#34;first&#34;:&#34;Alice&#34;,
+</span></span><span style=display:flex><span>      &#34;last&#34;: &#34;White&#34;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=3mapping映射>3、mapping映射</h2><p>Mapping(映射)
+<strong>Mapping</strong> 是用来定义一个文档(<strong>document</strong>)，以及它所包含的属性(<strong>field</strong>)是如何存储和 索引的。比如，使用 mapping 来定义:</p><p> 哪些字符串属性应该被看做全文本属性(full text fields)。  哪些属性包含数字，日期或者地理位置。
+ 文档中的所有属性是否都能被索引(_all 配置)。
+ 日期的格式。</p><p> 自定义映射规则来执行动态添加属性。</p><h3 id=1创建映射>1、创建映射</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>PUT /my-index
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  &#34;mappings&#34;: { 
+</span></span><span style=display:flex><span>    &#34;properties&#34;: {
+</span></span><span style=display:flex><span>      &#34;age&#34;:{ &#34;type&#34;: &#34;integer&#34; },
+</span></span><span style=display:flex><span>      &#34;email&#34;:{ &#34;type&#34;: &#34;keyword&#34; },
+</span></span><span style=display:flex><span>      &#34;name&#34;:{ &#34;type&#34;: &#34;text&#34; },
+</span></span><span style=display:flex><span>      //&#34;employee_id&#34;:{ &#34;type&#34;: &#34;text&#34; }
+</span></span><span style=display:flex><span>    } 
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=2添加新的字段映射>2、添加新的字段映射</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>PUT /my-index/_mapping
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  &#34;properties&#34;: {
+</span></span><span style=display:flex><span>    &#34;employee-id&#34;: {
+</span></span><span style=display:flex><span>      &#34;type&#34;: &#34;keyword&#34;,
+</span></span><span style=display:flex><span>      &#34;index&#34;: false
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=3迁移数据>3、迁移数据</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>POST _reindex
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  &#34;source&#34;: {
+</span></span><span style=display:flex><span>    &#34;index&#34;:&#34;bank&#34;,
+</span></span><span style=display:flex><span>    &#34;type&#34;:&#34;account&#34;
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  &#34;dest&#34;: {
+</span></span><span style=display:flex><span>    &#34;index&#34;: &#34;newbank&#34;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=4ik分词器>4、ik分词器</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>POST _analyze
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  &#34;analyzer&#34;: &#34;standard&#34;,
+</span></span><span style=display:flex><span>  &#34;text&#34;:&#34;尚硅谷电商项目&#34;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>POST _analyze
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  &#34;analyzer&#34;: &#34;ik_max_word&#34;,
+</span></span><span style=display:flex><span>  &#34;text&#34;:&#34;我是中国人&#34;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>POST _analyze
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  &#34;analyzer&#34;: &#34;ik_smart&#34;,
+</span></span><span style=display:flex><span>  &#34;text&#34;:&#34;我是中国人&#34;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>1）自定义词库</p><p>修改/usr/share/elasticsearch/plugins/ik/config/中的 IKAnalyzer.cfg.xml /usr/share/elasticsearch/plugins/ik/config</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;
+</span></span><span style=display:flex><span>&lt;!DOCTYPE properties SYSTEM &#34;http://java.sun.com/dtd/properties.dtd&#34;&gt; 
+</span></span><span style=display:flex><span>&lt;properties&gt;
+</span></span><span style=display:flex><span>	&lt;comment&gt;IK Analyzer 扩展配置&lt;/comment&gt; 
+</span></span><span style=display:flex><span>	&lt;!--用户可以在这里配置自己的扩展字典 --&gt; 
+</span></span><span style=display:flex><span>	&lt;entry key=&#34;ext_dict&#34;&gt;&lt;/entry&gt;
+</span></span><span style=display:flex><span>	&lt;!--用户可以在这里配置自己的扩展停止词字典--&gt; 
+</span></span><span style=display:flex><span>	&lt;entry key=&#34;ext_stopwords&#34;&gt;&lt;/entry&gt; 
+</span></span><span style=display:flex><span>	&lt;!--用户可以在这里配置远程扩展字典 --&gt;
+</span></span><span style=display:flex><span>	&lt;entry key=&#34;remote_ext_dict&#34;&gt;http://192.168.128.130/fenci/myword.txt&lt;/entry&gt; 
+</span></span><span style=display:flex><span>	&lt;!--用户可以在这里配置远程扩展停止词字典--&gt;
+</span></span><span style=display:flex><span>	&lt;!-- &lt;entry key=&#34;remote_ext_stopwords&#34;&gt;words_location&lt;/entry&gt; --&gt;
+</span></span><span style=display:flex><span>&lt;/properties&gt;
+</span></span></code></pre></div><h1 id=三实战>三、实战</h1><p><a href=https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html target=_blank rel=noopener>https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html</a></p><p>Es，kibana，jar包的版本必须一致</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>&lt;dependency&gt;
+</span></span><span style=display:flex><span>   &lt;groupId&gt;org.elasticsearch.client&lt;/groupId&gt;
+</span></span><span style=display:flex><span>   &lt;artifactId&gt;elasticsearch-rest-high-level-client&lt;/artifactId&gt;
+</span></span><span style=display:flex><span>   &lt;version&gt;7.4.2&lt;/version&gt;
+</span></span><span style=display:flex><span>&lt;/dependency&gt;
+</span></span></code></pre></div></div><footer class=post-footer><div class=post-tags><a href=/tags/elasticsearch rel=tag title=Elasticsearch>#Elasticsearch#</a>
+<a href=/tags/%e7%bc%93%e5%ad%98 rel=tag title=缓存>#缓存#</a>
+<a href=/tags/%e6%90%9c%e7%b4%a2 rel=tag title=搜索>#搜索#</a></div><div class=addthis_inline_share_toolbox></div><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>标题：</span>Elasticsearch</p><p><span>链接：</span>https://zhang4014439175.github.io/post/elasticsearch/</p><p><span>作者：</span>凡梦星尘</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick='var qr=document.getElementById("QR");qr.style.display==="none"?qr.style.display="block":qr.style.display="none"'>
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://zhang4014439175.github.io/post/spring%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/ rel=next title=Java框架-Spring设计思想><i class="fa fa-chevron-left"></i> Java框架-Spring设计思想</a></div><div class="post-nav-prev post-nav-item"><a href=https://zhang4014439175.github.io/post/rabbitmq%E4%BA%8C/ rel=prev title=RabbitMQ（二）>RabbitMQ（二）
+<i class="fa fa-chevron-right"></i></a></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=凡梦星尘><p class=site-author-name itemprop=name>凡梦星尘</p><p class="site-description motion-element" itemprop=description>再平凡的人也有属于他自己的梦想!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>29</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>33</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/elkan1788/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://www.zhihu.com/people/fan-meng-xing-chen-1 target=_blank title=知乎><i class="fa fa-fw fa-globe"></i>
+知乎</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://nutzam.com/ title=Nutz target=_blank>Nutz</a></li><li class=links-of-blogroll-item><a href=https://jfinal.com/ title=JFinal target=_blank>JFinal</a></li><li class=links-of-blogroll-item><a href=http://wendal.net/ title=Wendal target=_blank>Wendal</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/java>Java
+<sup>15</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/spring>Spring
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E6%A1%86%E6%9E%B6>框架
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql
+<sup>5</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/sql>SQL
+<sup>5</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/docker>Docker
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E5%AE%B9%E5%99%A8%E5%8C%96%E6%8A%80%E6%9C%AF>容器化技术
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/jvm>Jvm
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mybatis>Mybatis
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/rabbitmq>Rabbitmq
+<sup>2</sup></a></li></ul></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2023</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>热爱生活与梦想</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.96.0</a></span>
+<span class=separator-line>/</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
+<span class=separator-line>/</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.ucloud.cn/ style=font-weight:700 target=_blank>UCloud云存储</a></span>
+<span class=separator-line>/</span>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>粤ICP备18047355号</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<script type=text/javascript src=https://zhang4014439175.github.iojs/search.js></script>
+<script type=text/javascript src=https://zhang4014439175.github.iojs/affix.js></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".footer").outerHeight(!0),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var t=$(".header-inner").height()+10,n,s,e,o;$("#sidebar").css({'margin-top':t}).show(),n=parseInt($("#sidebar").css("margin-top")),s=parseInt($(".sidebar-inner").css("height")),e=n+s,o=$(".content-wrap").height(),o<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>const locale={placeholder:"欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^"};$(function(){detectIE()>0?$.getScript(document.location.protocol+"//unpkg.com/@waline/client@1.6.0/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,emoji:[],wordLimit:"200",uploadImage:!1,locale,requiredMeta:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var e=document.createElement("script"),t,n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

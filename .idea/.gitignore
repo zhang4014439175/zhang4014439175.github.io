@@ -1,0 +1,13 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Datasource local storage ignored files
+/../../../../../../../../:\Users\zhang4014439175\Desktop\个人博客\myblog\public\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+misc.xml
+modules.xml
+public.iml
+vcs.xml
+Project_Default.xml

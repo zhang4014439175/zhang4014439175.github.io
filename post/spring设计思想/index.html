@@ -1,0 +1,589 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Java框架-Spring设计思想 - 热爱生活与梦想</title><meta name=keywords content="博客,程序员,架构师,思考,读书,笔记,技术,分享,大数据,产品"><meta name=author content="凡梦星尘"><meta property="og:title" content="Java框架-Spring设计思想"><meta property="og:site_name" content="热爱生活与梦想"><meta property="og:image" content="https://zhang4014439175.github.ioimg/author.jpg"><meta name=title content="Java框架-Spring设计思想 - 热爱生活与梦想"><meta name=description content="Sample article showcasing basic String syntax."><link rel="shortcut icon" href=https://zhang4014439175.github.ioimg/favicon.ico><link rel=apple-touch-icon href=https://zhang4014439175.github.ioimg/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://zhang4014439175.github.ioimg/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://zhang4014439175.github.iocss/main.css rel=stylesheet type=text/css><link href=https://zhang4014439175.github.iocss/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
+<span class=site-title>热爱生活与梦想</span>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://zhang4014439175.github.io/post/spring%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/ itemprop=url>Java框架-Spring设计思想</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-05-07">2022-05-07</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/java-framework itemprop=url rel=index><span itemprop=name>Java-Framework</span></a>
+&nbsp;</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/spring itemprop=url rel=index><span itemprop=name>Spring</span></a>
+&nbsp;</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F itemprop=url rel=index><span itemprop=name>设计模式</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>9650 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>20分钟</span></span>
+<span id=/post/spring%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/ class="leancloud_visitors post-visitor" data-flag-title=Java框架-Spring设计思想><i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=一控制反转ioc>一、控制反转(IoC)</h1><p><strong>IoC(Inversion of Control,控制反转)</strong> 是Spring 中一个非常非常重要的概念，它不是什么技术，而是一种解耦的设计思想。它的主要目的是借助于“第三方”(Spring 中的 IOC 容器) 实现具有依赖关系的对象之间的解耦(IOC容器管理对象，你只管使用即可)，从而降低代码之间的耦合度。<strong>IOC 是一个原则，而不是一个模式，以下模式（但不限于）实现了IoC原则。</strong></p><p><strong>Spring IOC 容器就像是一个工厂一样，当我们需要创建一个对象的时候，只需要配置好配置文件/注解即可，完全不用考虑对象是如何被创建出来的。</strong> IOC 容器负责创建对象，将对象连接在一起，配置这些对象，并从创建中处理这些对象的整个生命周期，直到它们被完全销毁。</p><p>在实际项目中一个 Service 类如果有几百甚至上千个类作为它的底层，我们需要实例化这个 Service，你可能要每次都要搞清这个 Service 所有底层类的构造函数，这可能会把人逼疯。如果利用 IOC 的话，<strong>你只需要配置好，然后在需要的地方引用就行了</strong>，这大大增加了项目的可维护性且降低了开发难度。关于Spring IOC 的理解，推荐看这一下知乎的一个回答：[<a href=https://www.zhihu.com/question/23277575/answer/169698662 target=_blank rel=noopener>Spring IoC有什么好处呢？ - 知乎 (zhihu.com)]</a>
+，非常不错。</p><p><strong>控制反转怎么理解呢?</strong> 举个例子：&ldquo;对象a 依赖了对象 b，当对象 a 需要使用 对象 b的时候必须自己去创建。但是当系统引入了 IOC 容器后， 对象a 和对象 b 之前就失去了直接的联系。这个时候，当对象 a 需要使用 对象 b的时候， 我们可以指定 IOC 容器去创建一个对象b注入到对象 a 中&rdquo;。 对象 a 获得依赖对象 b 的过程,由<strong>主动行为</strong>变为了<strong>被动行为</strong>，控制权反转，这就是控制反转名字的由来。</p><h2 id=1什么是依赖倒置>1、什么是依赖倒置</h2><p>**什么是依赖倒置原则？**假设我们设计一辆汽车：先设计轮子，然后根据轮子的大小设计底盘，接着根据底盘设计车身，最后根据车身设计好整个汽车。这里就出现了一个“依赖”关系：汽车依赖车身，车身依赖底盘，底盘依赖轮子。</p><p>这样的设计看起来没问题，但是可维护性却很低。假设设计完工之后，上司却突然说根据市场<a href="https://www.zhihu.com/search?q=%e9%9c%80%e6%b1%82%e7%9a%84%e5%8f%98%e5%8a%a8&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7b%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A169698662%7d" target=_blank rel=noopener>需求的变动</a>
+，要我们把车子的轮子设计都改大一码。这下我们就蛋疼了：因为我们是根据轮子的尺寸设计的底盘，轮子的尺寸一改，底盘的设计就得修改；同样因为我们是根据底盘设计的车身，那么车身也得改，同理汽车设计也得改——整个设计几乎都得改！</p><p>我们现在换一种思路。我们先设计汽车的大概样子，然后根据汽车的样子来设计车身，根据车身来设计底盘，最后根据底盘来设计轮子。这时候，依赖关系就倒置过来了：轮子依赖底盘， 底盘依赖车身， 车身依赖汽车。</p><p>这时候，上司再说要改动轮子的设计，我们就只需要改动轮子的设计，而不需要动底盘，车身，汽车的设计了。</p><p>这就是依赖倒置原则——把原本的高层建筑依赖底层建筑“倒置”过来，变成底层建筑依赖高层建筑。高层建筑决定需要什么，底层去实现这样的需求，但是高层并不用管底层是怎么实现的。这样就不会出现前面的“牵一发动全身”的情况。</p><h1 id=二依赖注入di>二、依赖注入(DI)</h1><p><strong>DI(Dependecy Inject,依赖注入)是实现控制反转的一种设计模式，依赖注入就是将实例变量传入到一个对象中去。</strong></p><h1 id=三aop>三、AOP</h1><h1 id=四设计模式>四、设计模式</h1><h2 id=1工厂模式>1、工厂模式</h2><p>工厂模式是一种在工程中广泛应用的设计模式，对代码的解耦合起到了很大的作用</p><p>工厂模式提供了一种绝佳的创建对象的方法。在工厂模式中，我们并不会直接使用new来创建一个对象，而是使用一个共同的接口类来指定其实现类，这就大大降低了系统的耦合性——我们无需改变每个调用此接口的类，而直接改变实现此接口的类即可完成软件的更新迭代</p><p>工厂模式的代码</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>import java.util.ResourceBundle;
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>/**
+</span></span><span style=display:flex><span> * 使用此工厂类创建bean实例
+</span></span><span style=display:flex><span> */
+</span></span><span style=display:flex><span>public class BeanFactory {
+</span></span><span style=display:flex><span>    //加载配置文件
+</span></span><span style=display:flex><span>    private static ResourceBundle bundle;
+</span></span><span style=display:flex><span>    static {
+</span></span><span style=display:flex><span>        bundle = ResourceBundle.getBundle(&#34;instance&#34;);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    //根据指定的key,读取配置文件的全路径，创建对象
+</span></span><span style=display:flex><span>    public static &lt;T&gt;T getInstance(String key,Class&lt;T&gt; clazz){
+</span></span><span style=display:flex><span>        String className = bundle.getString(key);
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>        try {
+</span></span><span style=display:flex><span>            return (T)Class.forName(className).newInstance();
+</span></span><span style=display:flex><span>        }catch (Exception e){
+</span></span><span style=display:flex><span>            throw new RuntimeException();
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Class.forName(className).newInstance()方法就会返回className对应的类，这样就能够使用了。</p><p>工厂模式的思想正好契合SpringIOC的设计思想:某一接口的具体实现类的选择控制权从调用类中移除，转而交给第三方决定，即借由Spring的Bean配置来实现控制，这同样也是工厂模式的思想。 在Spring中有两个最基本的工厂，BeanFactory和ApplicationContext。BeanFactory是Spring框架的基础设施，面向的是Spring本身，也就是用于创建Spring扩展的其他内容，如Spring Security、Spring JDBC等，而ApplicationContext这个工厂是面向开发者的，也就是应用上下文——配置文件等，开发者能够使用这个工厂实现自己的功能。</p><p>工厂模式是把创建对象的任务交给工厂，从而来降低类与类之间的耦合。Spring最主要的两个特性就是AOP和IOC，其中IOC就是控制反转，将对象的控制权转移给Spring，并由Spring创建实例和管理各个实例之间的依赖关系，其中，对象的创建就是通过BeanFactory 和 ApplicationContext 完成的。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public interface BeanFactory {
+</span></span><span style=display:flex><span>    Object getBean(String name) throws BeansException;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    &lt;T&gt; T getBean(String name, @Nullable Class&lt;T&gt; requiredType) throws BeansException;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    Object getBean(String name, Object... args) throws BeansException;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    &lt;T&gt; T getBean(Class&lt;T&gt; requiredType) throws BeansException;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    &lt;T&gt; T getBean(Class&lt;T&gt; requiredType, Object... args) throws BeansException;
+</span></span><span style=display:flex><span>    //省略...
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>BeanFactory是Spring里面最底层的接口，是IoC的核心，定义了IoC的基本功能，包含了各种Bean的定义、加载、实例化，依赖注入和生命周期管理。BeanFactroy采用的是延迟加载形式来注入Bean的，只有在使用到某个Bean时(调用getBean())，才对该Bean进行加载实例化。这样，我们就不能提前发现一些存在的Spring的配置问题。
+</span></span></code></pre></div><p>2、ApplicationContext接口作为BeanFactory的子类，除了提供BeanFactory所具有的功能外，还扩展了其他更完整功能，对于Bean创建，ApplicationContext在容器启动时，一次性创建了所有的Bean。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
+</span></span><span style=display:flex><span>    @Nullable
+</span></span><span style=display:flex><span>    String getId();
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    String getApplicationName();
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    String getDisplayName();
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    long getStartupDate();
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    @Nullable
+</span></span><span style=display:flex><span>    ApplicationContext getParent();
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    AutowireCapableBeanFactory getAutowireCapableBeanFactory() throws IllegalStateException;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=2单例模式>2、单例模式</h2><p>在Spring中的Bean默认的作用域就是<strong>singleton单例</strong>的。单例模式的好处在于<strong>对一些重量级的对象，省略了重复创建对象花费的时间，减少了系统的开销</strong>，第二点是使用单例<strong>可以减少new操作的次数，减少了GC线程回收内存的压力</strong>。</p><p>对于单例bean的创建方式，主要看DefaultSingletonBeanRegistry 的 getSingleton() 方法：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
+</span></span><span style=display:flex><span>    /** 保存单例Objects的缓存集合ConcurrentHashMap，key：beanName --&gt; value：bean实例 */
+</span></span><span style=display:flex><span>    private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;&gt;(256);
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    public Object getSingleton(String beanName, ObjectFactory&lt;?&gt; singletonFactory) {
+</span></span><span style=display:flex><span>        Assert.notNull(beanName, &#34;Bean name must not be null&#34;);
+</span></span><span style=display:flex><span>        synchronized (this.singletonObjects) {
+</span></span><span style=display:flex><span>            //检查缓存中是否有实例，如果缓存中有实例，直接返回
+</span></span><span style=display:flex><span>            Object singletonObject = this.singletonObjects.get(beanName);
+</span></span><span style=display:flex><span>            if (singletonObject == null) {
+</span></span><span style=display:flex><span>                //省略...
+</span></span><span style=display:flex><span>                try {
+</span></span><span style=display:flex><span>                    //通过singletonFactory获取单例
+</span></span><span style=display:flex><span>                    singletonObject = singletonFactory.getObject();
+</span></span><span style=display:flex><span>                    newSingleton = true;
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>                //省略...
+</span></span><span style=display:flex><span>                if (newSingleton) {
+</span></span><span style=display:flex><span>                    addSingleton(beanName, singletonObject);
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            //返回实例
+</span></span><span style=display:flex><span>            return singletonObject;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    protected void addSingleton(String beanName, Object singletonObject) {
+</span></span><span style=display:flex><span>      synchronized (this.singletonObjects) {
+</span></span><span style=display:flex><span>        this.singletonObjects.put(beanName, singletonObject);
+</span></span><span style=display:flex><span>        this.singletonFactories.remove(beanName);
+</span></span><span style=display:flex><span>        this.earlySingletonObjects.remove(beanName);
+</span></span><span style=display:flex><span>        this.registeredSingletons.add(beanName);
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>从源码中可以看出，是通过ConcurrentHashMap的方式，如果在Map中存在则直接返回，如果不存在则创建，并且put进Map集合中，并且整段逻辑是使用同步代码块包住的，所以是线程安全的。</p><h2 id=3策略模式>3、策略模式</h2><p>策略模式，简单来说就是封装好一组策略算法，外部客户端根据不同的条件选择不同的策略算法解决问题。比如在Spring的Resource类，针对不同的资源，Spring定义了不同的Resource类的实现类，以此实现不同的访问方式。我们看一张类图：</p><p>简单介绍一下Resource的实现类：</p><p>UrlResource：访问网络资源的实现类。
+ServletContextResource：访问相对于 ServletContext 路径里的资源的实现类。
+ByteArrayResource：访问字节数组资源的实现类。
+PathResource：访问文件路径资源的实现类。
+ClassPathResource：访问类加载路径里资源的实现类。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>@RequestMapping(value = &#34;/resource&#34;, method = RequestMethod.GET)
+</span></span><span style=display:flex><span>public String resource(@RequestParam(name = &#34;type&#34;) String type,
+</span></span><span style=display:flex><span>                       @RequestParam(name = &#34;arg&#34;) String arg) throws Exception {
+</span></span><span style=display:flex><span>    Resource resource;
+</span></span><span style=display:flex><span>    //这里可以优化为通过工厂模式，根据type创建Resource的实现类
+</span></span><span style=display:flex><span>    if (&#34;classpath&#34;.equals(type)) {
+</span></span><span style=display:flex><span>        //classpath下的资源
+</span></span><span style=display:flex><span>        resource = new ClassPathResource(arg);
+</span></span><span style=display:flex><span>    } else if (&#34;file&#34;.equals(type)) {
+</span></span><span style=display:flex><span>        //本地文件系统的资源
+</span></span><span style=display:flex><span>        resource = new PathResource(arg);
+</span></span><span style=display:flex><span>    } else if (&#34;url&#34;.equals(type)) {
+</span></span><span style=display:flex><span>        //网络资源
+</span></span><span style=display:flex><span>        resource = new UrlResource(arg);
+</span></span><span style=display:flex><span>    } else {
+</span></span><span style=display:flex><span>        return &#34;fail&#34;;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    InputStream is = resource.getInputStream();
+</span></span><span style=display:flex><span>    ByteArrayOutputStream os = new ByteArrayOutputStream();
+</span></span><span style=display:flex><span>    int i;
+</span></span><span style=display:flex><span>    while ((i = is.read()) != -1) {
+</span></span><span style=display:flex><span>        os.write(i);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    String result = new String(os.toByteArray(), StandardCharsets.UTF_8);
+</span></span><span style=display:flex><span>    is.close();
+</span></span><span style=display:flex><span>    os.close();
+</span></span><span style=display:flex><span>    return &#34;type:&#34; + type + &#34;,arg:&#34; + arg + &#34;\r\n&#34; + result;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>这就是策略模式的思想，通过外部条件使用不同的算法解决问题。其实很简单，因为每个实现类的getInputStream()方法都不一样，我们看ClassPathResource的源码，是通过类加载器加载资源：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public class ClassPathResource extends AbstractFileResolvingResource {
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>	private final String path;
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>	@Nullable
+</span></span><span style=display:flex><span>	private ClassLoader classLoader;
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>	@Nullable
+</span></span><span style=display:flex><span>	private Class&lt;?&gt; clazz;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    public InputStream getInputStream() throws IOException {
+</span></span><span style=display:flex><span>        InputStream is;
+</span></span><span style=display:flex><span>        //通过类加载器加载类路径下的资源
+</span></span><span style=display:flex><span>        if (this.clazz != null) {
+</span></span><span style=display:flex><span>            is = this.clazz.getResourceAsStream(this.path);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        else if (this.classLoader != null) {
+</span></span><span style=display:flex><span>            is = this.classLoader.getResourceAsStream(this.path);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        else {
+</span></span><span style=display:flex><span>            is = ClassLoader.getSystemResourceAsStream(this.path);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        //如果输入流is为null，则报错
+</span></span><span style=display:flex><span>        if (is == null) {
+</span></span><span style=display:flex><span>            throw new FileNotFoundException(getDescription() + &#34; cannot be opened because it does not exist&#34;);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        //返回InputStream
+</span></span><span style=display:flex><span>        return is;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>再看UrlResource的源码，获取InputStream的实现又是另一种策略。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public class UrlResource extends AbstractFileResolvingResource {
+</span></span><span style=display:flex><span>	@Nullable
+</span></span><span style=display:flex><span>	private final URI uri;
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>	private final URL url;
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>	private final URL cleanedUrl;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>	@Override
+</span></span><span style=display:flex><span>	public InputStream getInputStream() throws IOException {
+</span></span><span style=display:flex><span>		//获取连接
+</span></span><span style=display:flex><span>		URLConnection con = this.url.openConnection();
+</span></span><span style=display:flex><span>		ResourceUtils.useCachesIfNecessary(con);
+</span></span><span style=display:flex><span>		try {
+</span></span><span style=display:flex><span>			//获取输入流，并返回
+</span></span><span style=display:flex><span>			return con.getInputStream();
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>		catch (IOException ex) {
+</span></span><span style=display:flex><span>			// Close the HTTP connection (if applicable).
+</span></span><span style=display:flex><span>			if (con instanceof HttpURLConnection) {
+</span></span><span style=display:flex><span>				((HttpURLConnection) con).disconnect();
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>			throw ex;
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=4代理模式>4、代理模式</h2><p>对于代理模式不了解地读者可以阅读另外一篇文章：Java设计模式之结构型模式：代理模式</p><p>AOP是Spring的一个核心特性(面向切面编程)，作为面向对象的一种补充，用于将那些与业务无关，但却对多个对象产生影响的公共行为和逻辑，抽取并封装为一个可重用的模块，减少系统中的重复代码，降低了模块间的耦合度，提高系统的可维护性。可用于权限认证、日志、事务处理。
+Spring AOP实现的关键在于动态代理，主要有两种方式，JDK动态代理和CGLIB动态代理：</p><p>（1）JDK动态代理只提供接口的代理，不支持类的代理，要求被代理类实现接口。JDK动态代理的核心是InvocationHandler接口和Proxy类，在获取代理对象时，使用Proxy类来动态创建目标类的代理类（即最终真正的代理类，这个类继承自Proxy并实现了我们定义的接口），当代理对象调用真实对象的方法时， InvocationHandler 通过invoke()方法反射来调用目标类中的代码，动态地将横切逻辑和业务编织在一起；</p><p>（2）如果被代理类没有实现接口，那么Spring AOP会选择使用CGLIB来动态代理目标类。CGLIB（Code Generation Library），是一个代码生成的类库，可以在运行时动态的生成指定类的一个子类对象，并覆盖其中特定方法并添加增强代码，从而实现AOP。CGLIB是通过继承的方式做的动态代理，因此如果某个类被标记为final，那么它是无法使用CGLIB做动态代理的。</p><p>我们看DefaultAopProxyFactory的createAopProxy()方法，Spring通过此方法创建动态代理类：</p><p>public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
+@Override
+public AopProxy createAopProxy(AdvisedSupport config) throws AopConfigException {
+if (config.isOptimize() || config.isProxyTargetClass() || hasNoUserSuppliedProxyInterfaces(config)) {
+Class targetClass = config.getTargetClass();
+if (targetClass == null) {
+throw new AopConfigException(&ldquo;TargetSource cannot determine target class: " + &ldquo;Either an interface or a target is required for proxy creation.&rdquo;);
+}
+if (targetClass.isInterface() || Proxy.isProxyClass(targetClass)) {
+return new JdkDynamicAopProxy(config);
+}
+return new ObjenesisCglibAopProxy(config);
+}
+else {
+return new JdkDynamicAopProxy(config);
+}
+}
+}
+从源码中可以看出，Spring会先判断是否实现了接口，如果实现了接口就使用JDK动态代理，如果没有实现接口则使用Cglib动态代理，也可以通过配置，强制使用Cglib动态代理，配置如下：</p><p>&lt;aop:aspectj-autoproxy proxy-target-class=&ldquo;true&rdquo;/>
+JDK动态代理和Cglib动态代理的区别：</p><p>JDK动态代理只能对实现了接口的类生成代理，没有实现接口的类不能使用。
+Cglib动态代理即使被代理的类没有实现接口，也可以使用，因为Cglib动态代理是使用继承被代理类的方式进行扩展。
+Cglib动态代理是通过继承的方式，覆盖被代理类的方法来进行代理，所以如果方法是被final修饰的话，就不能进行代理。</p><h2 id=5模板方法>5、模板方法</h2><p>对于模板模式不了解地读者可以阅读另外一篇文章：Java设计模式之行为型模式：模板方法模式</p><p>所谓模板就是一个方法，这个方法定义了算法的骨架，即将算法的实现定义成了一组步骤，并将一些步骤延迟到子类中实现，子类重写抽象类中的模板方法实现算法骨架中特定的步骤。模板模式可以不改变一个算法的结构即可重新定义该算法的某些特定步骤。在模板方法模式中，我们可以将相同部分的代码放在父类中，而将不同的代码放入不同的子类中，从而解决代码重复的问题。</p><p>Spring中的事务管理器就运用模板模式的设计，首先看PlatformTransactionManager类。这是最底层的接口，定义提交和回滚的方法。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public interface PlatformTransactionManager {
+</span></span><span style=display:flex><span>    TransactionStatus getTransaction(@Nullable TransactionDefinition definition) throws TransactionException;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    void commit(TransactionStatus status) throws TransactionException;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    void rollback(TransactionStatus status) throws TransactionException;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>毫无意外，使用了抽象类作为骨架，接着看AbstractPlatformTransactionManager类。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a2f>@Override</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>public</span> <span style=color:#a2f;font-weight:700>final</span> <span style=color:#0b0;font-weight:700>void</span> <span style=color:#00a000>commit</span><span style=color:#666>(</span>TransactionStatus status<span style=color:#666>)</span> <span style=color:#a2f;font-weight:700>throws</span> TransactionException <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    DefaultTransactionStatus defStatus <span style=color:#666>=</span> <span style=color:#666>(</span>DefaultTransactionStatus<span style=color:#666>)</span> status<span style=color:#666>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(</span>defStatus<span style=color:#666>.</span><span style=color:#b44>isLocalRollbackOnly</span><span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        <span style=color:#080;font-style:italic>//调用processRollback()
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        processRollback<span style=color:#666>(</span>defStatus<span style=color:#666>,</span> <span style=color:#a2f;font-weight:700>false</span><span style=color:#666>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span><span style=color:#666>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(!</span>shouldCommitOnGlobalRollbackOnly<span style=color:#666>()</span> <span style=color:#666>&amp;&amp;</span> defStatus<span style=color:#666>.</span><span style=color:#b44>isGlobalRollbackOnly</span><span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        <span style=color:#080;font-style:italic>//调用processRollback()
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        processRollback<span style=color:#666>(</span>defStatus<span style=color:#666>,</span> <span style=color:#a2f;font-weight:700>true</span><span style=color:#666>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span><span style=color:#666>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>//调用processCommit()
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    processCommit<span style=color:#666>(</span>defStatus<span style=color:#666>);</span>
+</span></span><span style=display:flex><span><span style=color:#666>}</span>
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>//这个方法定义了骨架，里面会调用一个doRollback()的模板方法
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>private</span> <span style=color:#0b0;font-weight:700>void</span> <span style=color:#00a000>processRollback</span><span style=color:#666>(</span>DefaultTransactionStatus status<span style=color:#666>,</span> <span style=color:#0b0;font-weight:700>boolean</span> unexpected<span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(</span>status<span style=color:#666>.</span><span style=color:#b44>hasSavepoint</span><span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>else</span> <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(</span>status<span style=color:#666>.</span><span style=color:#b44>isNewTransaction</span><span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>//调用doRollback()模板方法
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        doRollback<span style=color:#666>(</span>status<span style=color:#666>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>else</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>//省略了很多代码...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#666>}</span>
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>private</span> <span style=color:#0b0;font-weight:700>void</span> <span style=color:#00a000>processCommit</span><span style=color:#666>(</span>DefaultTransactionStatus status<span style=color:#666>)</span> <span style=color:#a2f;font-weight:700>throws</span> TransactionException <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(</span>status<span style=color:#666>.</span><span style=color:#b44>hasSavepoint</span><span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>else</span> <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(</span>status<span style=color:#666>.</span><span style=color:#b44>isNewTransaction</span><span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        <span style=color:#080;font-style:italic>//调用doCommit()模板方法
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        doCommit<span style=color:#666>(</span>status<span style=color:#666>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>else</span> <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(</span>isFailEarlyOnGlobalRollbackOnly<span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        unexpectedRollback <span style=color:#666>=</span> status<span style=color:#666>.</span><span style=color:#b44>isGlobalRollbackOnly</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>//省略了很多代码...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#666>}</span>
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>//模板方法doRollback()，把重要的步骤延迟到子类去实现
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>protected</span> <span style=color:#a2f;font-weight:700>abstract</span> <span style=color:#0b0;font-weight:700>void</span> <span style=color:#00a000>doRollback</span><span style=color:#666>(</span>DefaultTransactionStatus status<span style=color:#666>)</span> <span style=color:#a2f;font-weight:700>throws</span> TransactionException<span style=color:#666>;</span>
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>//模板方法doCommit()，把重要的步骤延迟到子类去实现
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>protected</span> <span style=color:#a2f;font-weight:700>abstract</span> <span style=color:#0b0;font-weight:700>void</span> <span style=color:#00a000>doCommit</span><span style=color:#666>(</span>DefaultTransactionStatus status<span style=color:#666>)</span> <span style=color:#a2f;font-weight:700>throws</span> TransactionException<span style=color:#666>;</span>
+</span></span></code></pre></div><p>模板方法则由各种事务管理器的实现类去实现，也就是把骨架中重要的doRollback()延迟到子类。一般来说，Spring默认是使用的事务管理器的实现类是DataSourceTransactionManager。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#080;font-style:italic>//通过继承AbstractPlatformTransactionManager抽象类
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>public</span> <span style=color:#a2f;font-weight:700>class</span> <span style=color:#00f>DataSourceTransactionManager</span> <span style=color:#a2f;font-weight:700>extends</span> AbstractPlatformTransactionManager
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>implements</span> ResourceTransactionManager<span style=color:#666>,</span> InitializingBean <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>//重写doCommit()方法，实现具体commit的逻辑
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>protected</span> <span style=color:#0b0;font-weight:700>void</span> <span style=color:#00a000>doCommit</span><span style=color:#666>(</span>DefaultTransactionStatus status<span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        DataSourceTransactionObject txObject <span style=color:#666>=</span> <span style=color:#666>(</span>DataSourceTransactionObject<span style=color:#666>)</span> status<span style=color:#666>.</span><span style=color:#b44>getTransaction</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>        Connection con <span style=color:#666>=</span> txObject<span style=color:#666>.</span><span style=color:#b44>getConnectionHolder</span><span style=color:#666>().</span><span style=color:#b44>getConnection</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(</span>status<span style=color:#666>.</span><span style=color:#b44>isDebug</span><span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>            logger<span style=color:#666>.</span><span style=color:#b44>debug</span><span style=color:#666>(</span><span style=color:#b44>&#34;Committing JDBC transaction on Connection [&#34;</span> <span style=color:#666>+</span> con <span style=color:#666>+</span> <span style=color:#b44>&#34;]&#34;</span><span style=color:#666>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>try</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>            con<span style=color:#666>.</span><span style=color:#b44>commit</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>catch</span> <span style=color:#666>(</span>SQLException ex<span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#a2f;font-weight:700>throw</span> <span style=color:#a2f;font-weight:700>new</span> TransactionSystemException<span style=color:#666>(</span><span style=color:#b44>&#34;Could not commit JDBC transaction&#34;</span><span style=color:#666>,</span> ex<span style=color:#666>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>//重写doRollback()方法，实现具体的rollback的逻辑
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>protected</span> <span style=color:#0b0;font-weight:700>void</span> <span style=color:#00a000>doRollback</span><span style=color:#666>(</span>DefaultTransactionStatus status<span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>    DataSourceTransactionObject txObject <span style=color:#666>=</span> <span style=color:#666>(</span>DataSourceTransactionObject<span style=color:#666>)</span> status<span style=color:#666>.</span><span style=color:#b44>getTransaction</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>    Connection con <span style=color:#666>=</span> txObject<span style=color:#666>.</span><span style=color:#b44>getConnectionHolder</span><span style=color:#666>().</span><span style=color:#b44>getConnection</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(</span>status<span style=color:#666>.</span><span style=color:#b44>isDebug</span><span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>      logger<span style=color:#666>.</span><span style=color:#b44>debug</span><span style=color:#666>(</span><span style=color:#b44>&#34;Rolling back JDBC transaction on Connection [&#34;</span> <span style=color:#666>+</span> con <span style=color:#666>+</span> <span style=color:#b44>&#34;]&#34;</span><span style=color:#666>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>try</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>      con<span style=color:#666>.</span><span style=color:#b44>rollback</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>catch</span> <span style=color:#666>(</span>SQLException ex<span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#a2f;font-weight:700>throw</span> <span style=color:#a2f;font-weight:700>new</span> TransactionSystemException<span style=color:#666>(</span><span style=color:#b44>&#34;Could not roll back JDBC transaction&#34;</span><span style=color:#666>,</span> ex<span style=color:#666>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#666>}</span>
+</span></span><span style=display:flex><span><span style=color:#666>}</span>
+</span></span></code></pre></div><p>如果你是用Hibernate框架，Hibernate也有自身的实现，这就体现了设计模式的开闭原则，通过继承或者组合的方式进行扩展，而不是直接修改类的代码。Hibernate的事务管理器则是HibernateTransactionManager。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a2f;font-weight:700>public</span> <span style=color:#a2f;font-weight:700>class</span> <span style=color:#00f>HibernateTransactionManager</span> <span style=color:#a2f;font-weight:700>extends</span> AbstractPlatformTransactionManager
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>implements</span> ResourceTransactionManager<span style=color:#666>,</span> BeanFactoryAware<span style=color:#666>,</span> InitializingBean <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>  <span style=color:#080;font-style:italic>//重写doCommit()方法，实现Hibernate的具体commit的逻辑
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:#a2f>@Override</span>
+</span></span><span style=display:flex><span>  <span style=color:#a2f;font-weight:700>protected</span> <span style=color:#0b0;font-weight:700>void</span> <span style=color:#00a000>doCommit</span><span style=color:#666>(</span>DefaultTransactionStatus status<span style=color:#666>)</span> <span style=color:#666>{</span>HibernateTransactionObject txObject <span style=color:#666>=</span> <span style=color:#666>(</span>HibernateTransactionObject<span style=color:#666>)</span> status<span style=color:#666>.</span><span style=color:#b44>getTransaction</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>      Transaction hibTx <span style=color:#666>=</span> txObject<span style=color:#666>.</span><span style=color:#b44>getSessionHolder</span><span style=color:#666>().</span><span style=color:#b44>getTransaction</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>      Assert<span style=color:#666>.</span><span style=color:#b44>state</span><span style=color:#666>(</span>hibTx <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>null</span><span style=color:#666>,</span> <span style=color:#b44>&#34;No Hibernate transaction&#34;</span><span style=color:#666>);</span>
+</span></span><span style=display:flex><span>      <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(</span>status<span style=color:#666>.</span><span style=color:#b44>isDebug</span><span style=color:#666>())</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        logger<span style=color:#666>.</span><span style=color:#b44>debug</span><span style=color:#666>(</span><span style=color:#b44>&#34;Committing Hibernate transaction on Session [&#34;</span> <span style=color:#666>+</span>
+</span></span><span style=display:flex><span>            txObject<span style=color:#666>.</span><span style=color:#b44>getSessionHolder</span><span style=color:#666>().</span><span style=color:#b44>getSession</span><span style=color:#666>()</span> <span style=color:#666>+</span> <span style=color:#b44>&#34;]&#34;</span><span style=color:#666>);</span>
+</span></span><span style=display:flex><span>      <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>      <span style=color:#a2f;font-weight:700>try</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        hibTx<span style=color:#666>.</span><span style=color:#b44>commit</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>      <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>      <span style=color:#a2f;font-weight:700>catch</span> <span style=color:#666>(</span>org<span style=color:#666>.</span><span style=color:#b44>hibernate</span><span style=color:#666>.</span><span style=color:#b44>TransactionException</span> ex<span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>throw</span> <span style=color:#a2f;font-weight:700>new</span> TransactionSystemException<span style=color:#666>(</span><span style=color:#b44>&#34;Could not commit Hibernate transaction&#34;</span><span style=color:#666>,</span> ex<span style=color:#666>);</span>
+</span></span><span style=display:flex><span>      <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>          <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>  <span style=color:#080;font-style:italic>//重写doRollback()方法，实现Hibernate的具体rollback的逻辑
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:#a2f>@Override</span>
+</span></span><span style=display:flex><span>  <span style=color:#a2f;font-weight:700>protected</span> <span style=color:#0b0;font-weight:700>void</span> <span style=color:#00a000>doRollback</span><span style=color:#666>(</span>DefaultTransactionStatus status<span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>    HibernateTransactionObject txObject <span style=color:#666>=</span> <span style=color:#666>(</span>HibernateTransactionObject<span style=color:#666>)</span> status<span style=color:#666>.</span><span style=color:#b44>getTransaction</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>    Transaction hibTx <span style=color:#666>=</span> txObject<span style=color:#666>.</span><span style=color:#b44>getSessionHolder</span><span style=color:#666>().</span><span style=color:#b44>getTransaction</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>    Assert<span style=color:#666>.</span><span style=color:#b44>state</span><span style=color:#666>(</span>hibTx <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>null</span><span style=color:#666>,</span> <span style=color:#b44>&#34;No Hibernate transaction&#34;</span><span style=color:#666>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>try</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>      hibTx<span style=color:#666>.</span><span style=color:#b44>rollback</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>catch</span> <span style=color:#666>(</span>org<span style=color:#666>.</span><span style=color:#b44>hibernate</span><span style=color:#666>.</span><span style=color:#b44>TransactionException</span> ex<span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#a2f;font-weight:700>throw</span> <span style=color:#a2f;font-weight:700>new</span> TransactionSystemException<span style=color:#666>(</span><span style=color:#b44>&#34;Could not roll back Hibernate transaction&#34;</span><span style=color:#666>,</span> ex<span style=color:#666>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>//省略...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>finally</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>(!</span>txObject<span style=color:#666>.</span><span style=color:#b44>isNewSession</span><span style=color:#666>()</span> <span style=color:#666>&amp;&amp;</span> <span style=color:#666>!</span><span style=color:#a2f;font-weight:700>this</span><span style=color:#666>.</span><span style=color:#b44>hibernateManagedSession</span><span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        txObject<span style=color:#666>.</span><span style=color:#b44>getSessionHolder</span><span style=color:#666>().</span><span style=color:#b44>getSession</span><span style=color:#666>().</span><span style=color:#b44>clear</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>      <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#666>}</span>
+</span></span><span style=display:flex><span><span style=color:#666>}</span>
+</span></span></code></pre></div><p>其实模板模式在日常开发中也经常用，比如一个方法中，前后代码都一样，只有中间有一部分操作不同，就可以使用模板模式进行优化代码，这可以大大地减少冗余的代码，非常实用。</p><h2 id=6适配器模式与责任链模式>6、适配器模式与责任链模式：</h2><p>对于适配器模式不了解地读者可以阅读另外一篇文章：Java设计模式之结构型模式：适配器模式</p><p>对于责任链模式不了解地读者可以阅读另外一篇文章：Java设计模式之行为型模式：责任链模式</p><p>适配器模式能使接口不兼容的对象能够相互合作，将一个类的接口，转换成客户期望的另外一个接口。</p><p>在SpringAOP中有一个很重要的功能就是使用的 Advice（通知） 来增强被代理类的功能，Advice主要有MethodBeforeAdvice、AfterReturningAdvice、ThrowsAdvice这几种。每个Advice都有对应的拦截器，如下所示：</p><p><img src="https://img-blog.csdnimg.cn/20210114023749722.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3NDUyMzM3MDA=,size_16,color_FFFFFF,t_70" alt></p><p>Spring需要将每个 Advice 都封装成对应的拦截器类型返回给容器，所以需要使用适配器模式对 Advice 进行转换。对应的就有三个适配器，我们看个类图：</p><p><img src=https://img-blog.csdnimg.cn/img_convert/4379434d9af489e7f4e11d60bffe44f1.png alt></p><p>适配器在Spring中是怎么把通知类和拦截类进行转换的呢，我们先看适配器的接口。定义了两个方法，分别是supportsAdvice()和getInterceptor()。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public interface AdvisorAdapter {
+</span></span><span style=display:flex><span>    //判断通知类是否匹配
+</span></span><span style=display:flex><span>    boolean supportsAdvice(Advice advice);
+</span></span><span style=display:flex><span>    //传入通知类，返回对应的拦截类
+</span></span><span style=display:flex><span>    MethodInterceptor getInterceptor(Advisor advisor);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>其实很简单，可以看出转换的方法就是getInterceptor()，通过supportsAdvice()进行判断。我们看前置通知的适配器的实现类MethodBeforeAdviceAdapter。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable {
+</span></span><span style=display:flex><span>    //判断是否匹配MethodBeforeAdvice通知类
+</span></span><span style=display:flex><span>	@Override
+</span></span><span style=display:flex><span>	public boolean supportsAdvice(Advice advice) {
+</span></span><span style=display:flex><span>		return (advice instanceof MethodBeforeAdvice);
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	//传入MethodBeforeAdvice，转换为MethodBeforeAdviceInterceptor拦截类
+</span></span><span style=display:flex><span>	@Override
+</span></span><span style=display:flex><span>	public MethodInterceptor getInterceptor(Advisor advisor) {
+</span></span><span style=display:flex><span>		MethodBeforeAdvice advice = (MethodBeforeAdvice) advisor.getAdvice();
+</span></span><span style=display:flex><span>		return new MethodBeforeAdviceInterceptor(advice);
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>getInterceptor()方法中，调用了对应的拦截类的构造器创建对应的拦截器返回，传入通知类advice作为参数。接着我们看拦截器MethodBeforeAdviceInterceptor。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a2f;font-weight:700>public</span> <span style=color:#a2f;font-weight:700>class</span> <span style=color:#00f>MethodBeforeAdviceInterceptor</span> <span style=color:#a2f;font-weight:700>implements</span> MethodInterceptor<span style=color:#666>,</span> Serializable <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#080;font-style:italic>//成员变量，通知类
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:#a2f;font-weight:700>private</span> MethodBeforeAdvice advice<span style=color:#666>;</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>  <span style=color:#080;font-style:italic>//定义了有参构造器，外部通过有参构造器创建MethodBeforeAdviceInterceptor
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:#a2f;font-weight:700>public</span> <span style=color:#00a000>MethodBeforeAdviceInterceptor</span><span style=color:#666>(</span>MethodBeforeAdvice advice<span style=color:#666>)</span> <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>      Assert<span style=color:#666>.</span><span style=color:#b44>notNull</span><span style=color:#666>(</span>advice<span style=color:#666>,</span> <span style=color:#b44>&#34;Advice must not be null&#34;</span><span style=color:#666>);</span>
+</span></span><span style=display:flex><span>      <span style=color:#a2f;font-weight:700>this</span><span style=color:#666>.</span><span style=color:#b44>advice</span> <span style=color:#666>=</span> advice<span style=color:#666>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#666>}</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#080;font-style:italic>//当调用拦截器的invoke方法时，就调用通知类的before()方法，实现前置通知
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>  <span style=color:#a2f>@Override</span>
+</span></span><span style=display:flex><span>  <span style=color:#a2f;font-weight:700>public</span> Object <span style=color:#00a000>invoke</span><span style=color:#666>(</span>MethodInvocation mi<span style=color:#666>)</span> <span style=color:#a2f;font-weight:700>throws</span> Throwable <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic>//调用通知类的before()方法，实现前置通知
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>      <span style=color:#a2f;font-weight:700>this</span><span style=color:#666>.</span><span style=color:#b44>advice</span><span style=color:#666>.</span><span style=color:#b44>before</span><span style=color:#666>(</span>mi<span style=color:#666>.</span><span style=color:#b44>getMethod</span><span style=color:#666>(),</span> mi<span style=color:#666>.</span><span style=color:#b44>getArguments</span><span style=color:#666>(),</span> mi<span style=color:#666>.</span><span style=color:#b44>getThis</span><span style=color:#666>()</span> <span style=color:#666>);</span>
+</span></span><span style=display:flex><span>      <span style=color:#a2f;font-weight:700>return</span> mi<span style=color:#666>.</span><span style=color:#b44>proceed</span><span style=color:#666>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#666>}</span>
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span><span style=color:#666>}</span>
+</span></span></code></pre></div><p>那么在哪里初始化这些适配器呢，我们看DefaultAdvisorAdapterRegistry()</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Serializable {
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>  private final List&lt;AdvisorAdapter&gt; adapters = new ArrayList&lt;&gt;(3);
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>  public DefaultAdvisorAdapterRegistry() {
+</span></span><span style=display:flex><span>    //初始化适配器，添加到adapters集合，也就是注册
+</span></span><span style=display:flex><span>    registerAdvisorAdapter(new MethodBeforeAdviceAdapter());
+</span></span><span style=display:flex><span>    registerAdvisorAdapter(new AfterReturningAdviceAdapter());
+</span></span><span style=display:flex><span>    registerAdvisorAdapter(new ThrowsAdviceAdapter());
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>  @Override
+</span></span><span style=display:flex><span>  public void registerAdvisorAdapter(AdvisorAdapter adapter) {
+</span></span><span style=display:flex><span>    this.adapters.add(adapter);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    //获取所有的拦截器
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException {
+</span></span><span style=display:flex><span>        List&lt;MethodInterceptor&gt; interceptors = new ArrayList&lt;&gt;(3);
+</span></span><span style=display:flex><span>        Advice advice = advisor.getAdvice();
+</span></span><span style=display:flex><span>        if (advice instanceof MethodInterceptor) {
+</span></span><span style=display:flex><span>            interceptors.add((MethodInterceptor) advice);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        //遍历adapters集合
+</span></span><span style=display:flex><span>        for (AdvisorAdapter adapter : this.adapters) {
+</span></span><span style=display:flex><span>            //调用supportsAdvice()方法，判断入参的advisor是否有匹配的适配器
+</span></span><span style=display:flex><span>            if (adapter.supportsAdvice(advice)) {
+</span></span><span style=display:flex><span>                //如果匹配，则调用getInterceptor()转换成对应的拦截器，添加到interceptors集合中
+</span></span><span style=display:flex><span>                interceptors.add(adapter.getInterceptor(advisor));
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        if (interceptors.isEmpty()) {
+</span></span><span style=display:flex><span>            throw new UnknownAdviceTypeException(advisor.getAdvice());
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        //返回拦截器集合
+</span></span><span style=display:flex><span>        return interceptors.toArray(new MethodInterceptor[0]);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>适配器模式在这里就是把通知类转为拦截类，转为拦截类之后，就添加到拦截器集合中。添加到拦截器集合之后，就用到了责任链模式，在ReflectiveMethodInvocation类被调用，我们看JDK动态代理JdkDynamicAopProxy的invoke()方法。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>@Override
+</span></span><span style=display:flex><span>@Nullable
+</span></span><span style=display:flex><span>public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+</span></span><span style=display:flex><span>    MethodInvocation invocation;
+</span></span><span style=display:flex><span>    //这里就是获取拦截器集合，最后就会调用到上文说的getInterceptors()
+</span></span><span style=display:flex><span>    List&lt;Object&gt; chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
+</span></span><span style=display:flex><span>    if (chain.isEmpty()) {
+</span></span><span style=display:flex><span>        //省略...
+</span></span><span style=display:flex><span>    }else {
+</span></span><span style=display:flex><span>        //创建一个MethodInvocation
+</span></span><span style=display:flex><span>        invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
+</span></span><span style=display:flex><span>        //调用proceed()方法，底层会通过指针遍历拦截器集合，然后实现前置通知等功能
+</span></span><span style=display:flex><span>        retVal = invocation.proceed();
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    //省略...
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>最后就在ReflectiveMethodInvocation里调用proceed()方法，proceed()方法是一个递归的方法，通过指针控制递归的结束。这是很典型的责任链模式。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Cloneable {
+</span></span><span style=display:flex><span>    protected final List&lt;?&gt; interceptorsAndDynamicMethodMatchers;
+</span></span><span style=display:flex><span>    //指针
+</span></span><span style=display:flex><span>    private int currentInterceptorIndex = -1;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    protected ReflectiveMethodInvocation(Object proxy, @Nullable Object target, Method method, @Nullable Object[] arguments, @Nullable Class&lt;?&gt; targetClass, List&lt;Object&gt; interceptorsAndDynamicMethodMatchers) {
+</span></span><span style=display:flex><span>        //省略...
+</span></span><span style=display:flex><span>        //拦截器的集合
+</span></span><span style=display:flex><span>        this.interceptorsAndDynamicMethodMatchers = interceptorsAndDynamicMethodMatchers;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    @Nullable
+</span></span><span style=display:flex><span>    public Object proceed() throws Throwable {
+</span></span><span style=display:flex><span>        //	We start with an index of -1 and increment early.
+</span></span><span style=display:flex><span>        if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
+</span></span><span style=display:flex><span>            //递归结束
+</span></span><span style=display:flex><span>            return invokeJoinpoint();
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        //获取拦截器，并且当前的指针+1
+</span></span><span style=display:flex><span>        Object interceptorOrInterceptionAdvice = this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
+</span></span><span style=display:flex><span>        if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) {
+</span></span><span style=display:flex><span>            InterceptorAndDynamicMethodMatcher dm =
+</span></span><span style=display:flex><span>                (InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
+</span></span><span style=display:flex><span>            if (dm.methodMatcher.matches(this.method, this.targetClass, this.arguments)) {
+</span></span><span style=display:flex><span>                return dm.interceptor.invoke(this);
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            else {
+</span></span><span style=display:flex><span>                //匹配失败，跳过，递归下一个
+</span></span><span style=display:flex><span>                return proceed();
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        else {
+</span></span><span style=display:flex><span>            //匹配拦截器，强转为拦截器，然后执行invoke()方法，然后就会调用拦截器里的成员变量的before()，afterReturning()等等，实现前置通知，后置通知，异常通知
+</span></span><span style=display:flex><span>            return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>这里可能没学过责任链模式的同学会看得有点晕，但是学过责任链模式应该很容易看懂，这其实跟SpringMVC的拦截器的逻辑实现几乎一样的。</p><h2 id=7观察者模式>7、观察者模式</h2><p>对于观察者模式不了解地读者可以阅读另外一篇文章：Java设计模式之行为型模式：观察者模式</p><p>观察者模式是一种对象行为型模式，当一个对象发生变化时，这个对象所依赖的对象也会做出反应。</p><p>Spring 事件驱动模型就是观察者模式很经典的一个应用。</p><p>1、事件角色：</p><p>在Spring事件驱动模型中，首先有事件角色ApplicationEvent，这是一个抽象类，抽象类下有四个实现类代表四种事件。</p><p>ContextStartedEvent：ApplicationContext启动后触发的事件。
+ContextStoppedEvent：ApplicationContext停止后触发的事件。
+ContextRefreshedEvent：ApplicationContext初始化或刷新完成后触发的事件。
+ContextClosedEvent：ApplicationContext关闭后触发的事件。</p><p><img src=https://img-blog.csdnimg.cn/img_convert/14105f461f406ca075f87aaf6ba930ef.png alt=img></p><p>2、事件发布者：</p><p>有了事件之后，需要有个发布者发布事件，发布者对应的类是ApplicationEventPublisher。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>@FunctionalInterface
+</span></span><span style=display:flex><span>public interface ApplicationEventPublisher {
+</span></span><span style=display:flex><span>    default void publishEvent(ApplicationEvent event) {
+</span></span><span style=display:flex><span>        publishEvent((Object) event);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    void publishEvent(Object event);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>@FunctionalInterface表示这是一个函数式接口，函数式接口只有一个抽象方法。ApplicationContext类又继承了ApplicationEventPublisher类，所以我们可以使用ApplicationContext发布事件。</p><p>3、事件监听者：</p><p>发布事件后需要有事件的监听者，事件监听者通过实现接口ApplicationListener来定义，这是一个函数式接口，并且带有泛型，要求E参数是ApplicationEvent的子类。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>@FunctionalInterface
+</span></span><span style=display:flex><span>public interface ApplicationListener&lt;E extends ApplicationEvent&gt; extends EventListener {
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>	void onApplicationEvent(E event);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>4、下面我们演示一下怎么使用，首先继承抽象类ApplicationEvent定义一个事件角色PayApplicationEvent。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public class PayApplicationEvent extends ApplicationEvent {
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    private String message;
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    public PayApplicationEvent(Object source, String message) {
+</span></span><span style=display:flex><span>        super(source);
+</span></span><span style=display:flex><span>        this.message = message;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    public String getMessage() {
+</span></span><span style=display:flex><span>        return message;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>接着定义一个PayApplicationEvent事件的监听者PayListener。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>@Component
+</span></span><span style=display:flex><span>public class PayListener implements ApplicationListener&lt;PayApplicationEvent&gt; {
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    public void onApplicationEvent(PayApplicationEvent event) {
+</span></span><span style=display:flex><span>        String message = event.getMessage();
+</span></span><span style=display:flex><span>        System.out.println(&#34;监听到PayApplicationEvent事件，消息为：&#34; + message);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>最后我们使用ApplicationContext发布事件。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>@SpringBootApplication
+</span></span><span style=display:flex><span>public class SpringmvcApplication {
+</span></span><span style=display:flex><span> 
+</span></span><span style=display:flex><span>    public static void main(String[] args) throws Exception {
+</span></span><span style=display:flex><span>        ApplicationContext applicationContext = SpringApplication.run(SpringmvcApplication.class, args);
+</span></span><span style=display:flex><span>        applicationContext.publishEvent(new PayApplicationEvent(applicationContext,&#34;成功支付100元！&#34;));
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>启动之后我们可以看到控制台打印：
+<img src=https://img-blog.csdnimg.cn/img_convert/fe1a39b71d5399949cc4e8a5b4963094.png alt=img></p><h2 id=8桥接模式>8、桥接模式</h2><p>可以根据客户的需求能够动态切换不同的数据源。比如我们的项目需要连接多个数据库，客户在每次访问中根据需要会去访问不同的数据库</p><h1 id=五常用的设计模式>五、常用的设计模式</h1><p><a href="https://blog.csdn.net/a745233700/article/details/112598471?ops_request_misc=&request_id=&biz_id=102&utm_term=spring" target=_blank rel=noopener>https://blog.csdn.net/a745233700/article/details/112598471?ops_request_misc=&request_id=&biz_id=102&utm_term=spring</a></p><h2 id=1装饰模式>1、装饰模式</h2><p><a href="https://so.csdn.net/so/search?q=%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f&spm=1001.2101.3001.7020" target=_blank rel=noopener>设计模式</a>
+系列文章：</p><p><a href=https://blog.csdn.net/a745233700/article/details/120253639 target=_blank rel=noopener>Java设计模式之创建型：工厂模式详解（简单工厂+工厂方法+抽象工厂）</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83625236 target=_blank rel=noopener>Java设计模式之创建型：建造者模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83618800 target=_blank rel=noopener>Java设计模式之创建型：单例模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83625951 target=_blank rel=noopener>Java设计模式之创建型：原型模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83628122 target=_blank rel=noopener>Java设计模式之结构型：适配器模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83628903 target=_blank rel=noopener>Java设计模式之结构型：装饰器模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83629577 target=_blank rel=noopener>Java设计模式之结构型：代理模式</a></p><p><a href=https://mp.csdn.net/mp_blog/creation/editor/120271538 target=_blank rel=noopener>Java设计模式之结构型：桥接模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83651734 target=_blank rel=noopener>Java设计模式之结构型：外观模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83660769 target=_blank rel=noopener>Java设计模式之结构型：组合模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83661080 target=_blank rel=noopener>Java设计模式之结构型：享元模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83661703 target=_blank rel=noopener>Java设计模式之行为型：策略模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83662336 target=_blank rel=noopener>Java设计模式之行为型：模板方法模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83691491 target=_blank rel=noopener>Java设计模式之行为型：责任链模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83662714 target=_blank rel=noopener>Java设计模式之行为型：观察者模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83721344 target=_blank rel=noopener>Java设计模式之行为型：访问者模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/120293022 target=_blank rel=noopener>Java设计模式之行为型：中介者模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83713445 target=_blank rel=noopener>Java设计模式之行为型：命令模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83720412 target=_blank rel=noopener>Java设计模式之行为型：状态模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83714161 target=_blank rel=noopener>Java设计模式之行为型：备忘录模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83690748 target=_blank rel=noopener>Java设计模式之行为型：迭代器模式</a></p><p><a href=https://blog.csdn.net/a745233700/article/details/83750731 target=_blank rel=noopener>Java设计模式之行为型：解释器模式</a></p></div><footer class=post-footer><div class=post-tags><a href=/tags/java rel=tag title=Java>#Java#</a>
+<a href=/tags/%e6%a1%86%e6%9e%b6 rel=tag title=框架>#框架#</a>
+<a href=/tags/spring rel=tag title=Spring>#Spring#</a>
+<a href=/tags/%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f rel=tag title=设计模式>#设计模式#</a></div><div class=addthis_inline_share_toolbox></div><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>标题：</span>Java框架-Spring设计思想</p><p><span>链接：</span>https://zhang4014439175.github.io/post/spring%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/</p><p><span>作者：</span>凡梦星尘</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick='var qr=document.getElementById("QR");qr.style.display==="none"?qr.style.display="block":qr.style.display="none"'>
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"></div><div class="post-nav-prev post-nav-item"><a href=https://zhang4014439175.github.io/post/elasticsearch/ rel=prev title=Elasticsearch>Elasticsearch
+<i class="fa fa-chevron-right"></i></a></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=凡梦星尘><p class=site-author-name itemprop=name>凡梦星尘</p><p class="site-description motion-element" itemprop=description>再平凡的人也有属于他自己的梦想!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>29</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>33</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/elkan1788/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://www.zhihu.com/people/fan-meng-xing-chen-1 target=_blank title=知乎><i class="fa fa-fw fa-globe"></i>
+知乎</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://nutzam.com/ title=Nutz target=_blank>Nutz</a></li><li class=links-of-blogroll-item><a href=https://jfinal.com/ title=JFinal target=_blank>JFinal</a></li><li class=links-of-blogroll-item><a href=http://wendal.net/ title=Wendal target=_blank>Wendal</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/java>Java
+<sup>15</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/spring>Spring
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E6%A1%86%E6%9E%B6>框架
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql
+<sup>5</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/sql>SQL
+<sup>5</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/docker>Docker
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E5%AE%B9%E5%99%A8%E5%8C%96%E6%8A%80%E6%9C%AF>容器化技术
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/jvm>Jvm
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mybatis>Mybatis
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/rabbitmq>Rabbitmq
+<sup>2</sup></a></li></ul></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2023</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>热爱生活与梦想</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.96.0</a></span>
+<span class=separator-line>/</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
+<span class=separator-line>/</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.ucloud.cn/ style=font-weight:700 target=_blank>UCloud云存储</a></span>
+<span class=separator-line>/</span>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>粤ICP备18047355号</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<script type=text/javascript src=https://zhang4014439175.github.iojs/search.js></script>
+<script type=text/javascript src=https://zhang4014439175.github.iojs/affix.js></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".footer").outerHeight(!0),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var t=$(".header-inner").height()+10,n,s,e,o;$("#sidebar").css({'margin-top':t}).show(),n=parseInt($("#sidebar").css("margin-top")),s=parseInt($(".sidebar-inner").css("height")),e=n+s,o=$(".content-wrap").height(),o<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>const locale={placeholder:"欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^"};$(function(){detectIE()>0?$.getScript(document.location.protocol+"//unpkg.com/@waline/client@1.6.0/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,emoji:[],wordLimit:"200",uploadImage:!1,locale,requiredMeta:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var e=document.createElement("script"),t,n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
